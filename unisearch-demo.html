@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>UniSearch — UK Universities for Nepali Students</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{--navy:#0F2A4A;--teal:#1A7F8E;--teal-l:#E6F5F7;--gold:#E8A020;--gold-l:#FEF7EC;--slate:#64748B;--slate-l:#F1F5F9;--white:#fff;--border:#E2E8F0;--text:#1E293B;--green:#16A34A;--green-l:#F0FDF4;--red:#DC2626;--red-l:#FFF7F7;--r:10px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#F8FAFC;color:var(--text);font-size:14px}
+/* NAV */
+nav{background:var(--navy);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:100}
+.logo{font-family:'Fraunces',serif;color:#fff;font-size:21px}.logo span{color:var(--gold)}
+.nav-links{display:flex;gap:20px}
+.nav-links a{color:rgba(255,255,255,.7);text-decoration:none;font-size:13px;font-weight:500}
+.nav-links a:hover{color:#fff}
+.nav-r{display:flex;gap:8px}
+.btn-w{border:1.5px solid rgba(255,255,255,.35);color:#fff;background:transparent;padding:6px 14px;border-radius:6px;font-size:13px;cursor:pointer;font-weight:500}
+.btn-g{background:var(--gold);color:var(--navy);padding:6px 14px;border-radius:6px;font-size:13px;cursor:pointer;font-weight:700;border:none}
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--navy) 0%,#1A4070 55%,#1A7F8E 100%);padding:32px 20px 24px}
+.hero h1{font-family:'Fraunces',serif;color:#fff;font-size:26px;margin-bottom:5px}
+.hero p{color:rgba(255,255,255,.7);font-size:13px;margin-bottom:18px}
+.sbar{display:flex;gap:8px;max-width:640px}
+.sbar input{flex:1;padding:11px 15px;border-radius:8px;border:none;font-size:14px;outline:none}
+.sbar button{background:var(--gold);color:var(--navy);border:none;padding:11px 20px;border-radius:8px;font-weight:700;cursor:pointer;font-size:13px;white-space:nowrap}
+.qtags{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+.qtag{background:rgba(255,255,255,.12);color:rgba(255,255,255,.85);padding:4px 11px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid rgba(255,255,255,.2);transition:background .2s}
+.qtag:hover,.qtag.on{background:rgba(255,255,255,.25)}
+/* STATS BAR */
+.statsbar{background:var(--navy);border-top:1px solid rgba(255,255,255,.1);padding:8px 20px;display:flex;gap:24px}
+.stat{color:rgba(255,255,255,.75);font-size:12px}.stat b{color:var(--gold);font-weight:700}
+/* LAYOUT */
+.layout{display:flex;max-width:1280px;margin:0 auto;padding:18px 16px;gap:0}
+/* SIDEBAR */
+.sidebar{width:264px;flex-shrink:0;margin-right:18px}
+.fs{background:#fff;border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden}
+.fh{padding:12px 14px;font-weight:600;font-size:13px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;border-bottom:1px solid var(--border)}
+.fh .arr{color:var(--slate);transition:transform .2s}
+.fh.col .arr{transform:rotate(-90deg)}
+.fb{padding:11px 14px}
+.fb.hid{display:none}
+.fs.pro{border:2px solid var(--teal)}
+.fs.pro .fh{background:var(--teal-l);color:var(--teal)}
+.pbadge{background:var(--teal);color:#fff;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700}
+.fl{font-size:11px;color:var(--slate);font-weight:600;margin-bottom:5px;margin-top:11px;text-transform:uppercase;letter-spacing:.3px}
+.fl:first-child{margin-top:0}
+.fi{width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:6px;font-size:13px;outline:none;color:var(--text);background:#fff}
+.fi:focus{border-color:var(--teal)}
+.cbrow{display:flex;align-items:center;gap:7px;padding:4px 0;cursor:pointer}
+.cbrow input{accent-color:var(--teal);width:13px;height:13px;cursor:pointer}
+.cbrow label{font-size:13px;cursor:pointer;flex:1}
+.cbrow .cnt{color:var(--slate);font-size:11px}
+.rsl{width:100%;margin-top:5px;accent-color:var(--teal)}
+.apbtn{width:100%;padding:9px;background:var(--teal);border:none;border-radius:6px;font-size:13px;color:#fff;cursor:pointer;font-weight:600;margin-top:8px}
+.apbtn:hover{background:#167180}
+.clrbtn{width:100%;padding:8px;background:var(--slate-l);border:1px solid var(--border);border-radius:6px;font-size:12px;color:var(--slate);cursor:pointer;font-weight:500;margin-top:4px}
+/* MAIN */
+.main{flex:1;min-width:0}
+.pmatch{background:var(--teal-l);border:1px solid var(--teal);border-radius:var(--r);padding:11px 15px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.pmatch p{font-size:13px;color:var(--teal);font-weight:500}
+.sw{position:relative;width:38px;height:21px;flex-shrink:0}
+.sw input{opacity:0;width:0;height:0}
+.sl{position:absolute;inset:0;background:#ccc;border-radius:21px;cursor:pointer;transition:.3s}
+.sl:before{content:'';position:absolute;height:15px;width:15px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
+input:checked+.sl{background:var(--teal)}
+input:checked+.sl:before{transform:translateX(17px)}
+.rhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.rcnt{font-size:19px;font-family:'Fraunces',serif;font-weight:700;color:var(--navy)}
+.rcnt span{color:var(--teal)}
+.srow{display:flex;align-items:center;gap:8px}
+.srow select{padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;background:#fff;cursor:pointer}
+/* CHIPS */
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px;min-height:4px}
+.chip{background:var(--teal-l);color:var(--teal);padding:3px 9px;border-radius:20px;font-size:12px;font-weight:500;display:flex;align-items:center;gap:4px}
+.chip .x{cursor:pointer;font-weight:700;font-size:14px;line-height:1}
+/* CARDS */
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:12px;transition:box-shadow .2s,border-color .2s;position:relative}
+.card:hover{box-shadow:0 2px 12px rgba(0,0,0,.08);border-color:#aed4d9}
+.card.eligible{border-left:4px solid var(--green)}
+.card.partial{border-left:4px solid var(--gold)}
+.card.notelig{border-left:4px solid #fca5a5}
+.elig-badge{position:absolute;top:14px;right:14px;font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px}
+.elig-badge.g{background:var(--green-l);color:var(--green);border:1px solid #bbf7d0}
+.elig-badge.y{background:var(--gold-l);color:#92400e;border:1px solid #fde68a}
+.elig-badge.r{background:var(--red-l);color:var(--red);border:1px solid #fecaca}
+.cardtop{display:flex;gap:14px;margin-bottom:12px}
+.ulogo{width:46px;height:46px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;border:1px solid var(--border)}
+.cbody{flex:1;min-width:0}
+.uniname{font-size:12px;font-weight:600;color:var(--slate);margin-bottom:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.cname{font-size:16px;font-family:'Fraunces',serif;font-weight:700;color:var(--navy);margin:3px 0 5px;line-height:1.2}
+/* MATCH */
+.mbar{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.ml{font-size:11px;color:var(--slate);white-space:nowrap}
+.mt{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.mf{height:100%;border-radius:3px}
+.mp{font-size:11px;font-weight:700;white-space:nowrap}
+/* REQ PILLS */
+.rpills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.rp{display:flex;align-items:center;gap:3px;font-size:11px;padding:3px 8px;border-radius:10px;font-weight:500}
+.rp.g{background:var(--green-l);color:var(--green)}
+.rp.r{background:var(--red-l);color:var(--red)}
+.rp.n{background:var(--slate-l);color:var(--slate)}
+/* DETAILS GRID */
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.ditem{background:var(--slate-l);border-radius:7px;padding:8px 10px}
+.ditem .dl{font-size:10px;color:var(--slate);font-weight:600;text-transform:uppercase;letter-spacing:.3px;margin-bottom:2px}
+.ditem .dv{font-size:13px;color:var(--navy);font-weight:600}
+/* REQ BOXES */
+.rboxes{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.rbox{border-radius:7px;padding:9px 11px;border:1px solid var(--border)}
+.rbox .rbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px}
+.rbox .rbv{font-size:12px;color:var(--text);line-height:1.4}
+.rbox.ug{background:#F0F4FF;border-color:#c7d2fe}.rbox.ug .rbl{color:#4338CA}
+.rbox.pg{background:#FFF7F0;border-color:#fed7aa}.rbox.pg .rbl{color:#c2410c}
+.rbox.ue{background:#F0FDF4;border-color:#bbf7d0}.rbox.ue .rbl{color:var(--green)}
+.rbox.pe{background:#FDF4FF;border-color:#e9d5ff}.rbox.pe .rbl{color:#7c3aed}
+/* CARD FOOTER */
+.cfoot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding-top:10px;border-top:1px solid var(--border)}
+.tatbadge{background:var(--slate-l);color:var(--slate);font-size:11px;padding:3px 8px;border-radius:6px;font-weight:500}
+.dep{font-size:12px;color:var(--slate)}
+.dep b{color:var(--navy);font-weight:700}
+.cacts{display:flex;gap:7px}
+.bsave{padding:7px 13px;border:1.5px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;font-size:12px;color:var(--slate);font-weight:500}
+.bsave:hover{border-color:var(--teal);color:var(--teal)}
+.bview{padding:7px 13px;border:none;border-radius:6px;background:var(--teal);color:#fff;cursor:pointer;font-size:12px;font-weight:600}
+.bview:hover{background:#167180}
+/* INTERVIEW BADGE */
+.ibadge{font-size:10px;padding:2px 7px;border-radius:8px;font-weight:600}
+.ibadge.yes{background:#FEF3C7;color:#92400E}
+.ibadge.no{background:var(--green-l);color:var(--green)}
+/* DETAIL MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;overflow-y:auto}
+.modal-bg.open{display:flex;justify-content:center;align-items:flex-start;padding:30px 16px}
+.modal{background:#fff;border-radius:14px;width:100%;max-width:720px;overflow:hidden}
+.mhero{background:linear-gradient(135deg,var(--navy),#1A7F8E);padding:28px 28px 24px;color:#fff}
+.mhero h2{font-family:'Fraunces',serif;font-size:22px;margin-bottom:4px}
+.mhero .msub{color:rgba(255,255,255,.75);font-size:13px}
+.mbody{padding:24px 28px}
+.msec{margin-bottom:20px}
+.msec h3{font-size:13px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--teal-l)}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mi{background:var(--slate-l);border-radius:8px;padding:10px 12px}
+.mil{font-size:10px;color:var(--slate);font-weight:700;text-transform:uppercase;margin-bottom:3px}
+.miv{font-size:13px;color:var(--navy);font-weight:600}
+.mclose{float:right;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:18px;cursor:pointer;border-radius:6px;padding:2px 8px;line-height:1.5}
+.mclose:hover{background:rgba(255,255,255,.25)}
+/* PAGINATION */
+.pag{display:flex;gap:5px;justify-content:center;margin-top:20px;padding-bottom:20px}
+.pb{padding:7px 13px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;font-size:13px}
+.pb.on{background:var(--teal);color:#fff;border-color:var(--teal);font-weight:600}
+.pb:hover:not(.on){background:var(--slate-l)}
+.noRes{text-align:center;padding:48px 24px;color:var(--slate)}
+.noRes h3{font-size:18px;margin-bottom:8px;color:var(--navy)}
+@media(max-width:768px){.sidebar,.nav-links,.nav-r{display:none}.layout{padding:10px}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Uni<span>Search</span> <span style="font-size:11px;background:rgba(255,255,255,.15);color:rgba(255,255,255,.8);padding:2px 8px;border-radius:10px;font-family:Inter;font-weight:500;vertical-align:middle">🇬🇧 UK Edition</span></div>
+  <div class="nav-links"><a href="#">Universities</a><a href="#">Requirements</a><a href="#">Visa Guide</a><a href="#">Scholarships</a></div>
+  <div class="nav-r"><button class="btn-w">Log in</button><button class="btn-g">Sign up free</button></div>
+</nav>
+
+<div class="hero">
+  <h1>Find UK Universities — Built for Nepali Students</h1>
+  <p>Real admission requirements from 50+ UK universities, translated into Nepali grades. Filter by your profile to see exactly where you qualify.</p>
+  <div class="sbar">
+    <input type="text" id="si" placeholder="Search university name or city…" oninput="render()"/>
+    <button onclick="render()">🔍 Search</button>
+  </div>
+  <div class="qtags">
+    <span class="qtag on" onclick="setR(this,'all')">All Regions</span>
+    <span class="qtag" onclick="setR(this,'England')">England</span>
+    <span class="qtag" onclick="setR(this,'Scotland')">Scotland</span>
+    <span class="qtag" onclick="setR(this,'Wales')">Wales</span>
+    <span class="qtag" onclick="setR(this,'Northern Ireland')">Northern Ireland</span>
+  </div>
+</div>
+
+<div class="statsbar">
+  <div class="stat"><b>53</b> Universities</div>
+  <div class="stat"><b>🇬🇧</b> United Kingdom</div>
+  <div class="stat"><b>Nepal-specific</b> requirements</div>
+  <div class="stat">Updated <b>July 2025</b></div>
+</div>
+
+<div class="layout">
+  <aside class="sidebar">
+
+    <!-- PROFILE MATCH -->
+    <div class="fs pro">
+      <div class="fh" onclick="tog(this)">
+        <span>🎯 My Profile <span class="pbadge">MATCH</span></span>
+        <span class="arr">▾</span>
+      </div>
+      <div class="fb" id="pb">
+        <p style="font-size:12px;color:var(--teal);margin-bottom:10px;line-height:1.5">Enter your profile to see which universities you qualify for.</p>
+
+        <div class="fl">Applying for</div>
+        <select class="fi" id="pLevel" onchange="render()">
+          <option value="pg">Postgraduate (Master's)</option>
+          <option value="ug">Undergraduate (Bachelor's)</option>
+        </select>
+
+        <div class="fl">Your % Score</div>
+        <input type="number" class="fi" id="pGPA" placeholder="e.g. 72" min="0" max="100" oninput="render()"/>
+        <div id="gradeLabel" style="font-size:11px;color:var(--teal);margin-top:3px;"></div>
+
+        <div class="fl" style="margin-top:14px;font-size:12px;font-weight:700;color:var(--navy)">🌐 English Language</div>
+        <div class="fl">Test Type</div>
+        <select class="fi" id="pLang" onchange="langToggle()">
+          <option value="">Not taken yet</option>
+          <option value="ielts">IELTS</option>
+          <option value="toefl">TOEFL iBT</option>
+          <option value="pte">PTE Academic</option>
+          <option value="duolingo">Duolingo</option>
+        </select>
+        <div id="scoreRow" style="display:none;margin-top:8px">
+          <div class="fl">Your Score</div>
+          <input type="number" class="fi" id="pScore" placeholder="e.g. 6.5" step="0.5" min="0" oninput="render()"/>
+        </div>
+
+        <div class="fl" style="margin-top:14px;font-size:12px;font-weight:700;color:var(--navy)">📋 Additional Filters</div>
+        <div class="fl">Interview Preference</div>
+        <select class="fi" id="pInt" onchange="render()">
+          <option value="">Any</option>
+          <option value="no">No Interview Required</option>
+          <option value="yes">Interview is OK</option>
+        </select>
+
+        <div class="fl">Max Deposit</div>
+        <select class="fi" id="pDep" onchange="render()">
+          <option value="">Any deposit</option>
+          <option value="2000">Up to £2,000</option>
+          <option value="3000">Up to £3,000</option>
+          <option value="5000">Up to £5,000</option>
+        </select>
+
+        <div class="fl">Response Time (TAT)</div>
+        <select class="fi" id="pTAT" onchange="render()">
+          <option value="">Any</option>
+          <option value="fast">Fast (1–2 weeks)</option>
+          <option value="medium">Standard (2–3 weeks)</option>
+          <option value="slow">Longer (4+ weeks)</option>
+        </select>
+
+        <button class="apbtn" onclick="render()">Apply Filters</button>
+        <button class="clrbtn" onclick="clearAll()">✕ Clear All</button>
+      </div>
+    </div>
+
+    <!-- REGION -->
+    <div class="fs">
+      <div class="fh" onclick="tog(this)"><span>📍 Region</span><span class="arr">▾</span></div>
+      <div class="fb">
+        <div class="cbrow"><input type="checkbox" id="rEng" onchange="render()"><label for="rEng">England</label><span class="cnt">42</span></div>
+        <div class="cbrow"><input type="checkbox" id="rSco" onchange="render()"><label for="rSco">Scotland</label><span class="cnt">7</span></div>
+        <div class="cbrow"><input type="checkbox" id="rWal" onchange="render()"><label for="rWal">Wales</label><span class="cnt">4</span></div>
+        <div class="cbrow"><input type="checkbox" id="rNI" onchange="render()"><label for="rNI">Northern Ireland</label><span class="cnt">1</span></div>
+      </div>
+    </div>
+
+    <!-- IELTS -->
+    <div class="fs">
+      <div class="fh" onclick="tog(this)"><span>🌐 Max IELTS Required</span><span class="arr">▾</span></div>
+      <div class="fb">
+        <div class="fl">Postgraduate max</div>
+        <select class="fi" id="fIELTS" onchange="render()">
+          <option value="">Any</option>
+          <option value="6.0">6.0 or below</option>
+          <option value="6.5">6.5 or below</option>
+          <option value="7.0">7.0 or below</option>
+        </select>
+        <div class="fl">UG IELTS max</div>
+        <select class="fi" id="fUGIELTS" onchange="render()">
+          <option value="">Any</option>
+          <option value="6.0">6.0 or below</option>
+          <option value="6.5">6.5 or below</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- INTERVIEW -->
+    <div class="fs">
+      <div class="fh" onclick="tog(this)"><span>🎤 Interview</span><span class="arr">▾</span></div>
+      <div class="fb">
+        <div class="cbrow"><input type="checkbox" id="iNo" onchange="render()"><label for="iNo">No interview required</label></div>
+        <div class="cbrow"><input type="checkbox" id="iYes" onchange="render()"><label for="iYes">Interview required</label></div>
+      </div>
+    </div>
+
+  </aside>
+
+  <main class="main">
+    <!-- Profile match toggle -->
+    <div class="pmatch">
+      <p>🎯 Show only universities where my profile meets the entry requirements</p>
+      <label class="sw"><input type="checkbox" id="matchToggle" onchange="render()"><span class="sl"></span></label>
+    </div>
+
+    <div class="rhead">
+      <div class="rcnt">Showing <span id="cnt">—</span> universities</div>
+      <div class="srow">
+        <select id="sortBy" onchange="render()">
+          <option value="default">Sort: Default</option>
+          <option value="match">Match Score ↓</option>
+          <option value="ielts_asc">IELTS: Low → High</option>
+          <option value="gpa_asc">Min GPA: Low → High</option>
+          <option value="tat">Fastest Response</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="chips" id="chips"></div>
+    <div id="cards"></div>
+
+    <div class="pag" id="pag"></div>
+  </main>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-bg" id="modal" onclick="closeModal(event)">
+  <div class="modal" id="modalBox">
+    <div class="mhero">
+      <button class="mclose" onclick="document.getElementById('modal').classList.remove('open')">✕</button>
+      <div style="font-size:11px;opacity:.7;margin-bottom:6px" id="mRegion"></div>
+      <h2 id="mName"></h2>
+      <div class="msub" id="mCity"></div>
+    </div>
+    <div class="mbody">
+      <div class="msec">
+        <h3>Entry Requirements for Nepali Students</h3>
+        <div class="mgrid">
+          <div class="mi"><div class="mil">UG (Bachelor's) Academic</div><div class="miv" id="mUGReq" style="font-size:12px;font-weight:400"></div></div>
+          <div class="mi"><div class="mil">PG (Master's) Academic</div><div class="miv" id="mPGReq" style="font-size:12px;font-weight:400"></div></div>
+          <div class="mi"><div class="mil">UG IELTS</div><div class="miv" id="mUGIELTS"></div></div>
+          <div class="mi"><div class="mil">PG IELTS</div><div class="miv" id="mPGIELTS"></div></div>
+        </div>
+      </div>
+      <div class="msec">
+        <h3>Application Process</h3>
+        <div class="mgrid">
+          <div class="mi"><div class="mil">Response Time (TAT)</div><div class="miv" id="mTAT"></div></div>
+          <div class="mi"><div class="mil">Interview Required</div><div class="miv" id="mInt"></div></div>
+          <div class="mi"><div class="mil">Deposit Required</div><div class="miv" id="mDep"></div></div>
+          <div class="mi"><div class="mil">Change of Agent</div><div class="miv" id="mCoA"></div></div>
+        </div>
+      </div>
+      <div class="msec">
+        <h3>Your Profile Match</h3>
+        <div id="mElig" style="font-size:13px;line-height:1.8;color:var(--text)"></div>
+      </div>
+      <div style="text-align:center;padding-top:8px">
+        <button class="bview" style="padding:12px 28px;font-size:14px" onclick="alert('This would open the official university admissions page')">Apply Now — Official Website ↗</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const RAW = [{"id": 1, "name": "University of Bristol", "city": "Bristol", "region": "England", "ug_req": "Internationally Recognized Foundation required", "pg_req": "First Division 65% / GPA 3.3 (KU/TU/PU) or 80%/GPA 3.7 for other universities", "ug_ielts": "6.0/6.5 (no band < 5.5)", "pg_ielts": "6.0/6.5 (no band < 5.5)", "ielts_min": 6.0, "pg_ielts_min": 6.5, "tat": "4-6 Weeks", "deposit": "\u00a31,500", "interview": "No", "pg_gpa_min": 65}, {"id": 2, "name": "University of Southampton", "city": "Southampton", "region": "England", "ug_req": "Internationally Recognized Foundation required", "pg_req": "UK upper second-class degree (2:1) equivalent", "ug_ielts": "6.0\u20137.0 (no band < 6.0)", "pg_ielts": "6.0\u20137.0 (no band < 6.0)", "ielts_min": 6.0, "pg_ielts_min": 6.0, "tat": "4-5 Weeks", "deposit": "\u2014", "interview": "\u2014", "pg_gpa_min": 60}, {"id": 3, "name": "Durham University", "city": "Durham", "region": "England", "ug_req": "Internationally Recognized Foundation required", "pg_req": "UK 2:1 or 2:2 equivalent", "ug_ielts": "6.0\u20137.0 (no band < 6.0)", "pg_ielts": "6.0\u20137.0 (no band < 6.0)", "ielts_min": 6.0, "pg_ielts_min": 6.0, "tat": "4-5 Weeks", "deposit": "\u2014", "interview": "No", "pg_gpa_min": 60}, {"id": 4, "name": "Cranfield University", "city": "Cranfield", "region": "England", "ug_req": "No UG Courses (PG Only)", "pg_req": "UK 2:1 or 2:2 equivalent", "ug_ielts": "N/A", "pg_ielts": "6.0/6.5 (no band < 5.5)", "ielts_min": null, "pg_ielts_min": 6.0, "tat": "3-4 Weeks", "deposit": "\u00a31,000", "interview": "No", "pg_gpa_min": 60}, {"id": 5, "name": "Queen Mary University of London", "city": "London", "region": "England", "ug_req": "A-Levels / IB or Foundation", "pg_req": "1st: 80%/GPA 3.7 | 2:1: 65%/GPA 3.0 | 2:2: 55%/GPA 2.4", "ug_ielts": "6.0/6.5 (no band < 5.5)", "pg_ielts": "6.0/6.5 (no band < 5.5)", "ielts_min": 6.0, "pg_ielts_min": 6.0, "tat": "3-4 Weeks", "deposit": "\u00a32,000", "interview": "No", "pg_gpa_min": 55}, {"id": 6, "name": "University of York", "city": "York", "region": "England", "ug_req": "Foundation required", "pg_req": "2:1 \u2192 65% | 2:2 \u2192 50%", "ug_ielts": "6.0/6.5 (no band < 5.5)", "pg_ielts": "6.0/6.5 (no band < 5.5)", "ielts_min": 6.0, "pg_ielts_min": 6.0, "tat": "3-4 Weeks", "deposit": "\u00a32,000", "interview": "No", "pg_gpa_min": 50}, {"id": 7, "name": "University of Bath", "city": "Bath", "region": "England", "ug_req": "Foundation required", "pg_req": "4-year Bachelor's with 60\u201365%", "ug_ielts": "6.0/6.5 (no band < 5.5)", "pg_ielts": "6.0/6.5 (no band < 5.5)", "ielts_min": 6.0, "pg_ielts_min": 6.0, "tat": "3-4 Weeks", "deposit": "\u00a32,000", "interview": "No", "pg_gpa_min": 60}, {"id": 8, "name": "University of Liverpool", "city": "Liverpool", "region": "England", "ug_req": "Foundation at Liverpool International College or equivalent", "pg_req": "4-year Bachelor's, min 3.25/4.0 GPA or 60%", "ug_ielts": "6.0/6.5 (no band < 5.5)", "pg_ielts": "6.0/6.5 (no band < 5.5)", "ielts_min": 6.0, "pg_ielts_min": 6.0, "tat": "3-4 Weeks", "deposit": "\u00a31,000", "interview": "No", "pg_gpa_min": 60}, {"id": 9, "name": "University of Aberdeen", "city": "Aberdeen", "region": "Scotland", "ug_req": "Min 65% overall incl. 65% in two science/maths subjects", "pg_req": "80%+ in 4-year Bachelor's degree", "ug_ielts": "6.0 overall (Writing 6.0, others 5.5)", "pg_ielts": "6.5 overall (Writing 6.0, others 5.5)", "ielts_min": 6.0, "pg_ielts_min": 6.5, "tat": "3-4 Weeks", "deposit": "50% on enrollment", "interview": "No", "pg_gpa_min": 80}, {"id": 10, "name": "Loughborough University", "city": "Loughborough", "region": "England", "ug_req": "Foundation required", "pg_req": "Refer to website for specific requirements", "ug_ielts": "6.0/6.5 (no band < 5.5)", "pg_ielts": "6.0/6.5 (no band < 5.5)", "ielts_min": 6.0, "pg_ielts_min": 6.0, "tat": "3-4 Weeks", "deposit": "\u2014", "interview": "No", "pg_gpa_min": 60}, {"id": 11, "name": "Queen's University Belfast", "city": "Belfast", "region": "Northern Ireland", "ug_req": "Foundation + HSE Certificate | A-Levels | IB 30\u201336 pts", "pg_req": "2:1 \u2192 65%+ (4yr) | 2:2 \u2192 60%+ (4yr)", "ug_ielts": "6.0 (no band < 5.5)", "pg_ielts": "6.5 (no band < 6.0)", "ielts_min": 6.0, "pg_ielts_min": 6.5, "tat": "3-4 Weeks", "deposit": "\u00a32,500", "interview": "No", "pg_gpa_min": 60}, {"id": 12, "name": "University of Leicester", "city": "Leicester", "region": "England", "ug_req": "Foundation required", "pg_req": "4-year Bachelor's, min 3.25/4.0 GPA or 60%", "ug_ielts": "6.0 (no band < 5.5)", "pg_ielts": "6.5 (no band < 6.0)", "ielts_min": 6.0, "pg_ielts_min": 6.5, "tat": "2-3 Weeks", "deposit": "\u00a33,000", "interview": "Yes", "pg_gpa_min": 60}, {"id": 13, "name": "University of Surrey", "city": "Guildford", "region": "England", "ug_req": "Foundation required", "pg_req": "4-year Bachelor's, min 3.25/4.0 GPA or 60%", "ug_ielts": "6.0 (no band < 5.5)", "pg_ielts": "6.5 (no band < 6.0)", "ielts_min": 6.0, "pg_ielts_min": 6.5, "tat": "2-3 Weeks", "deposit": "\u00a32,000", "interview": "No", "pg_gpa_min": 60}, {"id": 14, "name": "University of Strathclyde", "city": "Glasgow", "region": "Scotland", "ug_req": "Foundation required", "pg_req": "First class degree from 4-year recognised course", "ug_ielts": "6.0/6.5 (no band < 5.5)", "pg_ielts": "6.0/6.5 (no band < 5.5)", "ielts_min": 6.0, "pg_ielts_min": 6.0, "tat": "2-3 Weeks", "deposit": "\u00a32,000", "interview": "No", "pg_gpa_min": 65}, {"id": 15, "name": "Heriot-Watt University", "city": "Edinburgh", "region": "Scotland", "ug_req": "Foundation required", "pg_req": "UK 2:1 or 2:2 equivalent", "ug_ielts": "6.0 (no band < 5.5)", "pg_ielts": "6.5 (no band < 6.0)", "ielts_min": 6.0, "pg_ielts_min": 6.5, "tat": "2-3 Weeks", "deposit": "\u00a34,000", "interview": "Yes", "pg_gpa_min": 60}, {"id": 16, "name": "Royal Holloway, University of London", "city": "Egham, London", "region": "England", "ug_req": "Foundation required", "pg_req": "UK 2:1 or 2:2 equivalent", "ug_ielts": "6.5 (no band < 5.5)", "pg_ielts": "6.5 (no band < 6.0)", "ielts_min": 6.5, "pg_ielts_min": 6.5, "tat": "2-3 Weeks", "deposit": "\u00a33,000", "interview": "No", "pg_gpa_min": 60}, {"id": 17, "name": "University of Dundee", "city": "Dundee", "region": "Scotland", "ug_req": "Min GPA 2.8 (3.2/B+ in essential subjects)", "pg_req": "UK 2:1 or 2:2 equivalent", "ug_ielts": "6.5 (no band < 5.5)", "pg_ielts": "6.5 (no band < 6.1)", "ielts_min": 6.5, "pg_ielts_min": 6.5, "tat": "2-3 Weeks", "deposit": "\u00a32,000", "interview": "No", "pg_gpa_min": 60}, {"id": 18, "name": "University of East Anglia", "city": "Norwich", "region": "England", "ug_req": "A-Level and IB requirements", "pg_req": "2:1 \u2192 GPA 3.0/65% | 2:2 \u2192 GPA 2.7/55\u201360% (min 4-year degree)", "ug_ielts": "6.0 (min 5.5 each)", "pg_ielts": "6.0 (5.5 in two, 6.0 in others)", "ielts_min": 6.0, "pg_ielts_min": 6.0, "tat": "2-3 Weeks", "deposit": "\u00a32,000", "interview": "No", "pg_gpa_min": 55}, {"id": 20, "name": "Brunel University London", "city": "London", "region": "England", "ug_req": "Foundation required", "pg_req": "UK 2:1 or 2:2 equivalent", "ug_ielts": "6.0/6.5 (no band < 5.5)", "pg_ielts": "6.0/6.5 (no band < 5.5)", "ielts_min": 6.0, "pg_ielts_min": 6.0, "tat": "2-3 Weeks", "deposit": "\u00a35,000", "interview": "No", "pg_gpa_min": 60}, {"id": 21, "name": "Oxford Brookes University", "city": "Oxford", "region": "England", "ug_req": "School Leaving Certificate Exam (Grade XI & XII) average", "pg_req": "2:1 \u2192 65% | 2:2 \u2192 60% | Pass Degree \u2192 40%", "ug_ielts": "6.0\u20137.0 (R&W: 6.0, L&S: 5.5)", "pg_ielts": "6.0\u20137.0 (R&W: 6.0, L&S: 5.5)", "ielts_min": 6.0, "pg_ielts_min": 6.0, "tat": "2-3 Weeks", "deposit": "\u00a33,000", "interview": "No", "pg_gpa_min": 60}, {"id": 22, "name": "University of Essex", "city": "Colchester", "region": "England", "ug_req": "Foundation required", "pg_req": "Min 60% (second division) or GPA 2.70 from Bachelor's", "ug_ielts": "6.0/6.5 (no band < 5.5)", "pg_ielts": "6.0/6.5 (no band < 5.5)", "ielts_min": 6.0, "pg_ielts_min": 6.0, "tat": "3-4 Weeks", "deposit": "\u00a32,000", "interview": "Yes", "pg_gpa_min": 60}, {"id": 23, "name": "Swansea University", "city": "Swansea", "region": "Wales", "ug_req": "GPA 2.8 or 70% in Grade 12 (HSEB) | IB: 32 | A-Levels: ABB\u2013BBC", "pg_req": "2nd Class Lower: CGPA 3.0/B | 2nd Class Upper: CGPA 3.3/B+", "ug_ielts": "6.0/6.5 (no band < 5.5)", "pg_ielts": "IELTS 6.5 with 6.0 in each part", "ielts_min": 6.0, "pg_ielts_min": 6.5, "tat": "2-3 Weeks", "deposit": "\u00a34,000", "interview": "No", "pg_gpa_min": 60}, {"id": 25, "name": "University of Stirling", "city": "Stirling", "region": "Scotland", "ug_req": "HSC Year 12 with min 75%", "pg_req": "Min 70% in 4-year Bachelor's degree", "ug_ielts": "6.0/6.5 (no band < 5.5)", "pg_ielts": "6.0/6.5 (no band < 5.5)", "ielts_min": 6.0, "pg_ielts_min": 6.0, "tat": "2-3 Weeks", "deposit": "\u2014", "interview": "No", "pg_gpa_min": 70}, {"id": 26, "name": "Aston University", "city": "Birmingham", "region": "England", "ug_req": "ABB \u2192 GPA 3.0 | BBB \u2192 GPA 2.8", "pg_req": "UK 2:1 or 2:2 equivalent", "ug_ielts": "6.0/6.5 (no band < 5.5)", "pg_ielts": "6.0/6.5 (no band < 5.5)", "ielts_min": 6.0, "pg_ielts_min": 6.0, "tat": "2-3 Weeks", "deposit": "\u00a32,000", "interview": "Case-by-case", "pg_gpa_min": 60}, {"id": 27, "name": "Coventry University", "city": "Coventry & London", "region": "England", "ug_req": "65% overall (incl. 65% Maths & Physics for science)", "pg_req": "3yr BA: 60% | 4yr BE/BTech: 55%+", "ug_ielts": "IELTS 6.0 (min 5.5)", "pg_ielts": "IELTS 6.5 (min 5.5)", "ielts_min": 6.0, "pg_ielts_min": 6.5, "tat": "2-3 Weeks", "deposit": "\u00a34,000", "interview": "Yes", "pg_gpa_min": 55}, {"id": 28, "name": "Kingston University", "city": "London", "region": "England", "ug_req": "Foundation required", "pg_req": "4-year Bachelor's with 60\u201365%", "ug_ielts": "IELTS 6.0 (min 5.5)", "pg_ielts": "IELTS 6.5 (min 5.5)", "ielts_min": 6.0, "pg_ielts_min": 6.5, "tat": "2-3 Weeks", "deposit": "\u00a35,000", "interview": "No", "pg_gpa_min": 60}, {"id": 29, "name": "Bangor University", "city": "Bangor", "region": "Wales", "ug_req": "Grade 12: 65%+ or 3yr Engineering Diploma after HSE", "pg_req": "3yr Bachelor's: 65%/First Division | 4yr Bachelor's: 50%/GPA 2.5", "ug_ielts": "IELTS 6.0 (min 5.5)", "pg_ielts": "IELTS 6.0 (min 5.5)", "ielts_min": 6.0, "pg_ielts_min": 6.0, "tat": "2-3 Weeks", "deposit": "\u00a37,000", "interview": "Yes", "pg_gpa_min": 50}, {"id": 30, "name": "University of Portsmouth", "city": "Portsmouth", "region": "England", "ug_req": "Foundation required", "pg_req": "Bachelor's with GPA 2.6 / 65%+", "ug_ielts": "IELTS 6.0 (min 5.5)", "pg_ielts": "IELTS 6.5 (min 5.5)", "ielts_min": 6.0, "pg_ielts_min": 6.5, "tat": "2-3 Weeks", "deposit": "\u00a33,500", "interview": "Yes", "pg_gpa_min": 65}, {"id": 31, "name": "University of Bradford", "city": "Bradford", "region": "England", "ug_req": "HSE Certificate 80%", "pg_req": "4yr Bachelor's 80% | or GPA 3.5 | or 65%/GPA 3.0", "ug_ielts": "IELTS 6.0 (min 5.5)", "pg_ielts": "IELTS 6.5 (min 5.5)", "ielts_min": 6.0, "pg_ielts_min": 6.5, "tat": "3-4 Weeks", "deposit": "\u00a32,000", "interview": "Yes", "pg_gpa_min": 65}, {"id": 33, "name": "University of Plymouth", "city": "Plymouth", "region": "England", "ug_req": "Grade XII at 70% (or 60% with Foundation year)", "pg_req": "Distinction 80% = 1st | First Division 65% = 2:1 | Second Division 50% = 2:2", "ug_ielts": "6.0 (5.5 in all components)", "pg_ielts": "6.5 (5.5 in all components)", "ielts_min": 6.0, "pg_ielts_min": 6.5, "tat": "3-4 Weeks", "deposit": "\u00a33,000", "interview": "Yes", "pg_gpa_min": 50}, {"id": 34, "name": "University of Westminster", "city": "London", "region": "England", "ug_req": "Foundation from UK institution (60\u201365%)", "pg_req": "4yr Bachelor's min 60% | 3yr Bachelor's + Master's min 60%", "ug_ielts": "6.0 (min 5.5 each)", "pg_ielts": "6.5 (Writing min 6.0)", "ielts_min": 6.0, "pg_ielts_min": 6.5, "tat": "3-4 Weeks", "deposit": "\u00a34,000", "interview": "No", "pg_gpa_min": 60}, {"id": 35, "name": "Middlesex University", "city": "London", "region": "England", "ug_req": "Class XII First Division min 60%", "pg_req": "Master's 65% (3yr Bach) \u2192 2:2 | Master's 70% (3yr Bach) \u2192 2:1", "ug_ielts": "6.0 (min 5.5 each)", "pg_ielts": "6.5 (min 6.0 each)", "ielts_min": 6.0, "pg_ielts_min": 6.5, "tat": "2-3 Weeks", "deposit": "50% on enroll", "interview": "Yes", "pg_gpa_min": 65}, {"id": 36, "name": "University of Greenwich", "city": "London", "region": "England", "ug_req": "High School Certificate min 65% (75% for Law/Architecture)", "pg_req": "Bachelor's min 65% for 2:2 | 80% for 2:1", "ug_ielts": "IELTS 6.0 (min 5.5 each)", "pg_ielts": "IELTS 6.5 (min 5.5 each)", "ielts_min": 6.0, "pg_ielts_min": 6.5, "tat": "2-3 Weeks", "deposit": "\u00a33,000", "interview": "Yes", "pg_gpa_min": 65}, {"id": 40, "name": "London South Bank University", "city": "London", "region": "England", "ug_req": "HSE Certificate: 60%+", "pg_req": "3\u20134yr Honours Degree: 60%+ (varies by course)", "ug_ielts": "6.0 (no component < 5.5)", "pg_ielts": "6.5 (no component < 5.5)", "ielts_min": 6.0, "pg_ielts_min": 6.5, "tat": "2-3 Weeks", "deposit": "\u00a33,500", "interview": "No", "pg_gpa_min": 60}, {"id": 42, "name": "Birmingham City University", "city": "Birmingham", "region": "England", "ug_req": "HSC 60%/GPA 2.8 (BLSS/ADM/HELS) | 65%/GPA 3.0 (CEBE)", "pg_req": "4yr Bachelor's min 55% overall (60% for CEBE faculty)", "ug_ielts": "IELTS 6.0 (no band < 5.5)", "pg_ielts": "IELTS 6.0 (no band < 5.5)", "ielts_min": 6.0, "pg_ielts_min": 6.0, "tat": "3-4 Weeks", "deposit": "\u2014", "interview": "\u2014", "pg_gpa_min": 55}, {"id": 43, "name": "De Montfort University", "city": "Leicester", "region": "England", "ug_req": "A-levels/Foundation | 75%+ HSC for direct entry", "pg_req": "4yr Bachelor's 55%+ | 3yr degree needs pre-Master's", "ug_ielts": "IELTS 6.0\u20137.0 (varies by subject)", "pg_ielts": "IELTS 6.0\u20137.0 (varies by subject)", "ielts_min": 6.0, "pg_ielts_min": 6.0, "tat": "2-3 Weeks", "deposit": "\u00a31,000", "interview": "Yes", "pg_gpa_min": 55}, {"id": 44, "name": "Edinburgh Napier University", "city": "Edinburgh", "region": "Scotland", "ug_req": "HSE Certificate 70%+ or Proficiency Certificate 75%+", "pg_req": "4yr Bachelor's + 2yr work exp | Master's after 3yr Bachelor's", "ug_ielts": "6.0 (no component < 5.5)", "pg_ielts": "6.0 (no component < 5.5)", "ielts_min": 6.0, "pg_ielts_min": 6.0, "tat": "2-3 Weeks", "deposit": "\u00a33,500", "interview": "Yes", "pg_gpa_min": 60}, {"id": 45, "name": "Manchester Metropolitan University", "city": "Manchester", "region": "England", "ug_req": "HSC + Foundation year", "pg_req": "Master's or 4yr Bachelor's with good grades from recognised university", "ug_ielts": "6.0 (no less than 5.5 any section)", "pg_ielts": "6.5 (no less than 5.5 any section)", "ielts_min": 6.0, "pg_ielts_min": 6.5, "tat": "3-4 Weeks", "deposit": "\u00a33,000", "interview": "No", "pg_gpa_min": 60}, {"id": 47, "name": "University of Brighton", "city": "Brighton", "region": "England", "ug_req": "HSE Board Exam Certificate with 65%+", "pg_req": "3yr Bachelor's GPA 2.6/65% | 4yr Bachelor's GPA 2.2/60%", "ug_ielts": "6.0 (no less than 5.5 each)", "pg_ielts": "6.5 (no less than 5.5 each)", "ielts_min": 6.0, "pg_ielts_min": 6.5, "tat": "2-3 Weeks", "deposit": "\u00a33,000", "interview": "Yes", "pg_gpa_min": 60}, {"id": 48, "name": "University of Central Lancashire", "city": "Preston", "region": "England", "ug_req": "64% overall from recognised boards", "pg_req": "58% in 3yr Bachelor's | 55% in 4yr Bachelor's", "ug_ielts": "IELTS 6.0", "pg_ielts": "IELTS 6.5", "ielts_min": 6.0, "pg_ielts_min": 6.5, "tat": "2-3 Weeks", "deposit": "\u00a33,500", "interview": "Yes", "pg_gpa_min": 55}, {"id": 49, "name": "University of Hertfordshire", "city": "Hatfield", "region": "England", "ug_req": "2yr HSE Certificate: 70%+", "pg_req": "3yr Bachelor's 65%+ | 4yr Bachelor's 60%+", "ug_ielts": "IELTS 6.0 (min 5.5 any band)", "pg_ielts": "IELTS 6.0\u20136.5 (min 5.5 any band)", "ielts_min": 6.0, "pg_ielts_min": 6.0, "tat": "3-4 Weeks", "deposit": "\u00a35,000", "interview": "Yes", "pg_gpa_min": 60}, {"id": 50, "name": "University of East London", "city": "London", "region": "England", "ug_req": "HSC Year 12: GPA 2.8 / 60%+ (Foundation if lower)", "pg_req": "4yr Bachelor's, Second Division, 55%+ average", "ug_ielts": "IELTS 5.5\u20136.0 (varies by course)", "pg_ielts": "IELTS 6.0\u20136.5 (varies by course)", "ielts_min": 5.5, "pg_ielts_min": 6.0, "tat": "2-3 Weeks", "deposit": "\u00a31,550 (interview)", "interview": "Yes", "pg_gpa_min": 55}, {"id": 51, "name": "University of Salford", "city": "Manchester", "region": "England", "ug_req": "Bachelor's from TU with First Division / 65%+", "pg_req": "Master's from TU with First Division (60\u201374% aggregate)", "ug_ielts": "IELTS 6.0 (min 5.5 each)", "pg_ielts": "IELTS 6.0 (min 5.5 each)", "ielts_min": 6.0, "pg_ielts_min": 6.0, "tat": "2-3 Weeks", "deposit": "\u00a35,500", "interview": "Case by case", "pg_gpa_min": 60}, {"id": 52, "name": "University of the West of England", "city": "Bristol", "region": "England", "ug_req": "HSC 60%/GPA 2.6 (Foundation if lower)", "pg_req": "4yr Degree 65%+ | 3yr TU Degree 55%+ | GPA 2.6 minimum", "ug_ielts": "6.0 (5.5 each, Academic only)", "pg_ielts": "6.5 (5.5 each, Academic only)", "ielts_min": 6.0, "pg_ielts_min": 6.5, "tat": "3-4 Weeks", "deposit": "\u00a35,500", "interview": "Yes", "pg_gpa_min": 55}, {"id": 54, "name": "Staffordshire University", "city": "Stoke-on-Trent", "region": "England", "ug_req": "International Foundation Year from UK institution", "pg_req": "2:1 courses: 80%+ (4\u20137yr) | 2:2 courses: 70%+ (4\u20137yr)", "ug_ielts": "IELTS 6.0 (5.5 each)", "pg_ielts": "Varies by course \u2014 check course page", "ielts_min": 6.0, "pg_ielts_min": 6.5, "tat": "2-3 Weeks", "deposit": "\u00a33,500", "interview": "Yes", "pg_gpa_min": 70}, {"id": 57, "name": "Cardiff Metropolitan University", "city": "Cardiff", "region": "Wales", "ug_req": "HSC Intermediate 60%", "pg_req": "4yr Bachelor's: 60%/GPA 2.6 from recognised institution in Nepal", "ug_ielts": "IELTS 6.0", "pg_ielts": "IELTS 6.0", "ielts_min": 6.0, "pg_ielts_min": 6.0, "tat": "3-4 Weeks", "deposit": "\u00a37,000", "interview": "No", "pg_gpa_min": 60}, {"id": 59, "name": "University of Chester", "city": "Chester", "region": "England", "ug_req": "HSSC 60%+ | 2yr Bachelor's 60%+ | 3yr Bachelor's 55\u201365%", "pg_req": "3yr Bachelor's 60%+ | 4yr Bachelor's 50%+", "ug_ielts": "IELTS UKVI Academic 6.0 (min 5.5)", "pg_ielts": "IELTS UKVI Academic 6.5 (min 5.5)", "ielts_min": 6.0, "pg_ielts_min": 6.5, "tat": "4-5 Weeks", "deposit": "\u00a33,000", "interview": "Yes", "pg_gpa_min": 50}, {"id": 61, "name": "Liverpool Hope University", "city": "Liverpool", "region": "England", "ug_req": "Foundation 50% | HSEB Standard XII: 75%+", "pg_req": "Good undergraduate degree from recognised university", "ug_ielts": "6.0 (R&W: 6.0, others min 5.5)", "pg_ielts": "6.5 (R&W: 6.0, min 6.0 each for PG)", "ielts_min": 6.0, "pg_ielts_min": 6.5, "tat": "3-4 Weeks", "deposit": "\u00a33,000", "interview": "No", "pg_gpa_min": 60}, {"id": 62, "name": "University of Gloucestershire", "city": "Gloucester", "region": "England", "ug_req": "HSC 65%/GPA 3.0/B (foundation if lower)", "pg_req": "4yr Bachelor's 65%+ | 3yr Bachelor's + Master's 65%+", "ug_ielts": "IELTS 6.0 (no less than 5.5 any band)", "pg_ielts": "IELTS 6.0 (no less than 5.5 any component)", "ielts_min": 6.0, "pg_ielts_min": 6.0, "tat": "2-3 Weeks", "deposit": "\u00a34,000", "interview": "Yes", "pg_gpa_min": 65}, {"id": 65, "name": "University of Sunderland", "city": "Sunderland & London", "region": "England", "ug_req": "CTEVT Diploma 60% | HSC 60%", "pg_req": "4yr: 60% (Purvanchal) / 55% (TU/KU/PU) / GPA 2.6", "ug_ielts": "Min 6.0 (5.5+ each component)", "pg_ielts": "Min 6.0 (5.5+ each component)", "ielts_min": 6.0, "pg_ielts_min": 6.0, "tat": "1-2 Weeks", "deposit": "50% of Fees", "interview": "No", "pg_gpa_min": 55}, {"id": 66, "name": "Leeds Beckett University", "city": "Leeds", "region": "England", "ug_req": "Class 12 (NEB): 60%+", "pg_req": "3yr Bachelor's 60%+ | 4yr Bachelor's 50%+", "ug_ielts": "IELTS 6.0 (no skill < 5.5)", "pg_ielts": "IELTS 6.0 (no skill < 5.5)", "ielts_min": 6.0, "pg_ielts_min": 6.0, "tat": "2-3 Weeks", "deposit": "50% of Fees", "interview": "Yes (after deposit)", "pg_gpa_min": 50}, {"id": 69, "name": "University of Wolverhampton", "city": "Wolverhampton", "region": "England", "ug_req": "Secondary Ed. Certificate: 60%/CGPA 2.8", "pg_req": "3\u20134yr undergraduate degree: min 53%", "ug_ielts": "IELTS 6.0 or 65% in Compulsory English (Grade XII)", "pg_ielts": "IELTS 6.5 or 70% in Compulsory English (Grade XII)", "ielts_min": 6.0, "pg_ielts_min": 6.5, "tat": "3-4 Weeks", "deposit": "50% of Fees", "interview": "Yes", "pg_gpa_min": 53}]
+;
+
+// Enrich with initials & colors
+const COLORS=['#003F88','#00457C','#660099','#C0082D','#009877','#7C3AED','#B45309','#0369A1','#7E1D00','#1D4ED8'];
+const DATA = RAW.map((u,i)=>{
+  const words = u.name.replace(/[^\w\s]/g,'').split(' ').filter(w=>w.length>2);
+  const abbr = words.slice(0,2).map(w=>w[0]).join('').toUpperCase();
+  return {...u, abbr, color: COLORS[i%COLORS.length]};
+});
+
+let region='all', page=1, PER=10;
+
+function tog(h){h.classList.toggle('col');h.nextElementSibling.classList.toggle('hid')}
+function setR(el,r){document.querySelectorAll('.qtag').forEach(t=>t.classList.remove('on'));el.classList.add('on');region=r;render()}
+function langToggle(){const v=document.getElementById('pLang').value;document.getElementById('scoreRow').style.display=v?'block':'none';render()}
+
+function getIELTSNum(str){if(!str||str==='N/A') return null;const m=str.match(/(\d+\.\d+)/);return m?parseFloat(m[1]):null}
+function getTATScore(t){if(!t) return 99;if(t.includes('1-2')) return 1;if(t.includes('2-3')) return 2;if(t.includes('3-4')) return 3;if(t.includes('4-5')) return 4;if(t.includes('4-6')) return 5;return 6}
+function getDepNum(d){if(!d||d==='—') return 0;const m=d.match(/[\d,]+/);return m?parseInt(m[0].replace(',','')):0}
+
+function calcMatch(u, gpa, lang, score, level){
+  let pts=0, total=0, reasons=[];
+  const isUG = level==='ug';
+  const minGPA = isUG ? null : u.pg_gpa_min;
+  const minIELTS = isUG ? u.ielts_min : u.pg_ielts_min;
+
+  if(gpa && minGPA){
+    total+=40;
+    if(gpa>=minGPA){pts+=40;reasons.push({ok:true,text:`GPA ✓ Your ${gpa}% meets min ${minGPA}%`})}
+    else{reasons.push({ok:false,text:`GPA ✗ Your ${gpa}% below min ${minGPA}%`})}
+  }
+  if(lang && score && minIELTS){
+    total+=40;
+    if(score>=minIELTS){pts+=40;reasons.push({ok:true,text:`${lang.toUpperCase()} ✓ Your ${score} meets min ${minIELTS}`})}
+    else{reasons.push({ok:false,text:`${lang.toUpperCase()} ✗ Your ${score} below min ${minIELTS}`})}
+  }
+  if(!total) return {score:70,reasons:[],unknown:true};
+  const pct = Math.round((pts/total)*100);
+  return {score:pct,reasons,unknown:false};
+}
+
+function render(){
+  const search = document.getElementById('si').value.toLowerCase().trim();
+  const level = document.getElementById('pLevel').value;
+  const gpa = parseFloat(document.getElementById('pGPA').value)||0;
+  const lang = document.getElementById('pLang').value;
+  const score = parseFloat(document.getElementById('pScore')?.value)||0;
+  const pInt = document.getElementById('pInt').value;
+  const pDep = parseInt(document.getElementById('pDep').value)||0;
+  const pTAT = document.getElementById('pTAT').value;
+  const matchOnly = document.getElementById('matchToggle').checked;
+  const sortBy = document.getElementById('sortBy').value;
+  const fIELTS = parseFloat(document.getElementById('fIELTS').value)||0;
+  const fUGIELTS = parseFloat(document.getElementById('fUGIELTS').value)||0;
+  const rEng = document.getElementById('rEng').checked;
+  const rSco = document.getElementById('rSco').checked;
+  const rWal = document.getElementById('rWal').checked;
+  const rNI = document.getElementById('rNI').checked;
+  const iNo = document.getElementById('iNo').checked;
+  const iYes = document.getElementById('iYes').checked;
+
+  // grade label
+  if(gpa){
+    let lbl='';
+    if(gpa>=80) lbl='≈ Distinction / First Division';
+    else if(gpa>=65) lbl='≈ First Division';
+    else if(gpa>=55) lbl='≈ Second Division';
+    else if(gpa>=45) lbl='≈ Third Division';
+    else lbl='Below standard division';
+    document.getElementById('gradeLabel').textContent='🏷 '+lbl;
+  } else document.getElementById('gradeLabel').textContent='';
+
+  let list = DATA.map(u=>{
+    const m = calcMatch(u, gpa, lang, score, level);
+    return {...u, _match: m};
+  });
+
+  // region filter (quick tags)
+  if(region!=='all') list=list.filter(u=>u.region===region);
+
+  // checkbox regions
+  const anyRegion = rEng||rSco||rWal||rNI;
+  if(anyRegion) list=list.filter(u=>(rEng&&u.region==='England')||(rSco&&u.region==='Scotland')||(rWal&&u.region==='Wales')||(rNI&&u.region==='Northern Ireland'));
+
+  // search
+  if(search) list=list.filter(u=>u.name.toLowerCase().includes(search)||u.city.toLowerCase().includes(search));
+
+  // match only
+  if(matchOnly) list=list.filter(u=>u._match.score>=60||u._match.unknown);
+
+  // IELTS filter
+  if(fIELTS) list=list.filter(u=>!u.pg_ielts_min||u.pg_ielts_min<=fIELTS);
+  if(fUGIELTS) list=list.filter(u=>!u.ielts_min||u.ielts_min<=fUGIELTS);
+
+  // interview filter
+  if(iNo&&!iYes) list=list.filter(u=>u.interview==='No');
+  if(iYes&&!iNo) list=list.filter(u=>u.interview!=='No'&&u.interview!=='—');
+
+  // deposit filter
+  if(pDep) list=list.filter(u=>getDepNum(u.deposit)<=pDep||getDepNum(u.deposit)===0);
+
+  // TAT filter
+  if(pTAT==='fast') list=list.filter(u=>getTATScore(u.tat)<=1);
+  if(pTAT==='medium') list=list.filter(u=>getTATScore(u.tat)<=2);
+  if(pTAT==='slow') list=list.filter(u=>getTATScore(u.tat)>=4);
+
+  // sort
+  if(sortBy==='match') list.sort((a,b)=>b._match.score-a._match.score);
+  if(sortBy==='ielts_asc') list.sort((a,b)=>(a.pg_ielts_min||0)-(b.pg_ielts_min||0));
+  if(sortBy==='gpa_asc') list.sort((a,b)=>(a.pg_gpa_min||0)-(b.pg_gpa_min||0));
+  if(sortBy==='tat') list.sort((a,b)=>getTATScore(a.tat)-getTATScore(b.tat));
+
+  document.getElementById('cnt').textContent=list.length;
+
+  // chips
+  const chipEl = document.getElementById('chips');
+  chipEl.innerHTML='';
+  if(region!=='all') chipEl.innerHTML+=`<span class="chip">📍 ${region}<span class="x" onclick="setR(document.querySelector('.qtag'),\'all\')">×</span></span>`;
+  if(gpa) chipEl.innerHTML+=`<span class="chip">📊 ${gpa}%</span>`;
+  if(lang&&score) chipEl.innerHTML+=`<span class="chip">🌐 ${lang.toUpperCase()} ${score}</span>`;
+  if(matchOnly) chipEl.innerHTML+=`<span class="chip">🎯 Match Only</span>`;
+
+  // pagination
+  const total = list.length;
+  const pages = Math.ceil(total/PER);
+  if(page>pages) page=1;
+  const slice = list.slice((page-1)*PER, page*PER);
+
+  // render cards
+  if(!slice.length){
+    document.getElementById('cards').innerHTML=`<div class="noRes"><h3>No universities found</h3><p>Try adjusting your filters or clearing your profile inputs.</p></div>`;
+    document.getElementById('pag').innerHTML='';
+    return;
+  }
+
+  document.getElementById('cards').innerHTML = slice.map(u=>{
+    const m = u._match;
+    const gpaOK = !gpa || !u.pg_gpa_min || gpa>=u.pg_gpa_min;
+    const langOK = !lang || !score || !u.pg_ielts_min || score>=u.pg_ielts_min;
+    const isElig = gpaOK && langOK;
+    const hasProfile = gpa||score;
+
+    let borderClass='', badgeHTML='';
+    if(hasProfile){
+      if(m.unknown){borderClass='';badgeHTML=''}
+      else if(m.score>=80){borderClass='eligible';badgeHTML='<span class="elig-badge g">✓ Likely Eligible</span>'}
+      else if(m.score>=50){borderClass='partial';badgeHTML='<span class="elig-badge y">⚠ Partial Match</span>'}
+      else{borderClass='notelig';badgeHTML='<span class="elig-badge r">✗ Below Requirement</span>'}
+    }
+
+    const matchColor = m.score>=80?'#16A34A':m.score>=50?'#E8A020':'#DC2626';
+    const matchBg = `linear-gradient(90deg,${matchColor},${matchColor}cc)`;
+
+    const pillsHTML = m.reasons.map(r=>`<span class="rp ${r.ok?'g':'r'}">${r.ok?'✓':'✗'} ${r.text}</span>`).join('');
+    const noPills = !m.reasons.length;
+
+    return `<div class="card ${borderClass}" id="card${u.id}">
+  ${badgeHTML}
+  <div class="cardtop">
+    <div class="ulogo" style="background:${u.color}18;color:${u.color};border-color:${u.color}30">${u.abbr}</div>
+    <div class="cbody">
+      <div class="uniname">
+        🇬🇧 ${u.region}
+        <span style="background:${u.color}15;color:${u.color};font-size:10px;padding:2px 7px;border-radius:8px;font-weight:600">${u.city}</span>
+        ${u.interview==='Yes'?'<span class="ibadge yes">Interview</span>':u.interview==='No'?'<span class="ibadge no">No Interview</span>':''}
+      </div>
+      <div class="cname">${u.name}</div>
+    </div>
+  </div>
+
+  ${hasProfile?`<div class="mbar">
+    <span class="ml">Profile match</span>
+    <div class="mt"><div class="mf" style="width:${m.score}%;background:${matchBg}"></div></div>
+    <span class="mp" style="color:${matchColor}">${m.unknown?'—':m.score+'%'}</span>
+  </div>`:''}
+
+  ${!noPills?`<div class="rpills">${pillsHTML}</div>`:''}
+
+  <div class="rboxes">
+    <div class="rbox ug"><div class="rbl">🎓 UG Requirements</div><div class="rbv">${u.ug_req}</div></div>
+    <div class="rbox pg"><div class="rbl">🎓 PG Requirements</div><div class="rbv">${u.pg_req}</div></div>
+    <div class="rbox ue"><div class="rbl">🌐 UG IELTS</div><div class="rbv">${u.ug_ielts}</div></div>
+    <div class="rbox pe"><div class="rbl">🌐 PG IELTS</div><div class="rbv">${u.pg_ielts}</div></div>
+  </div>
+
+  <div class="dgrid">
+    <div class="ditem"><div class="dl">Response Time</div><div class="dv">⏱ ${u.tat}</div></div>
+    <div class="ditem"><div class="dl">Deposit Required</div><div class="dv">💷 ${u.deposit}</div></div>
+  </div>
+
+  <div class="cfoot">
+    <span class="tatbadge">⏱ ${u.tat}</span>
+    <div class="cacts">
+      <button class="bsave" onclick="event.stopPropagation()">🔖 Save</button>
+      <button class="bview" onclick="openModal(${u.id})">View Details →</button>
+    </div>
+  </div>
+</div>`}).join('');
+
+  // pagination
+  let pagHTML='';
+  if(pages>1){
+    if(page>1) pagHTML+=`<button class="pb" onclick="goPage(${page-1})">‹</button>`;
+    for(let i=1;i<=pages;i++){
+      if(i===1||i===pages||Math.abs(i-page)<=1) pagHTML+=`<button class="pb ${i===page?'on':''}" onclick="goPage(${i})">${i}</button>`;
+      else if(Math.abs(i-page)===2) pagHTML+=`<button class="pb" disabled>…</button>`;
+    }
+    if(page<pages) pagHTML+=`<button class="pb" onclick="goPage(${page+1})">›</button>`;
+  }
+  document.getElementById('pag').innerHTML=pagHTML;
+
+  // store for modal
+  window._filtered = list;
+}
+
+function goPage(p){page=p;render();window.scrollTo({top:0,behavior:'smooth'})}
+
+function openModal(id){
+  const u = DATA.find(x=>x.id===id);
+  if(!u) return;
+  const gpa = parseFloat(document.getElementById('pGPA').value)||0;
+  const lang = document.getElementById('pLang').value;
+  const score = parseFloat(document.getElementById('pScore')?.value)||0;
+  const level = document.getElementById('pLevel').value;
+  const m = calcMatch(u, gpa, lang, score, level);
+
+  document.getElementById('mName').textContent = u.name;
+  document.getElementById('mCity').textContent = `📍 ${u.city}, ${u.region}, United Kingdom`;
+  document.getElementById('mRegion').textContent = '🇬🇧 United Kingdom';
+  document.getElementById('mUGReq').textContent = u.ug_req;
+  document.getElementById('mPGReq').textContent = u.pg_req;
+  document.getElementById('mUGIELTS').textContent = u.ug_ielts;
+  document.getElementById('mPGIELTS').textContent = u.pg_ielts;
+  document.getElementById('mTAT').textContent = u.tat;
+  document.getElementById('mInt').textContent = u.interview;
+  document.getElementById('mDep').textContent = u.deposit;
+  document.getElementById('mCoA').textContent = u.change_of_agent||'—';
+
+  let eligHTML='';
+  if(m.unknown||(!gpa&&!score)){
+    eligHTML='<p style="color:var(--slate)">Enter your GPA and English score in the sidebar to see your eligibility for this university.</p>';
+  } else {
+    eligHTML = m.reasons.map(r=>`<div style="padding:6px 10px;border-radius:7px;background:${r.ok?'var(--green-l)':'var(--red-l)'};color:${r.ok?'var(--green)':'var(--red)'};margin-bottom:5px;font-weight:500">${r.text}</div>`).join('');
+    eligHTML += `<div style="margin-top:10px;font-weight:700;color:${m.score>=80?'var(--green)':m.score>=50?'var(--gold)':'var(--red)'}">Overall Match: ${m.score}%</div>`;
+  }
+  document.getElementById('mElig').innerHTML = eligHTML;
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal(e){if(e.target.id==='modal') document.getElementById('modal').classList.remove('open')}
+
+function clearAll(){
+  document.getElementById('si').value='';
+  document.getElementById('pGPA').value='';
+  document.getElementById('pLang').value='';
+  document.getElementById('pScore').value='';
+  document.getElementById('pInt').value='';
+  document.getElementById('pDep').value='';
+  document.getElementById('pTAT').value='';
+  document.getElementById('matchToggle').checked=false;
+  document.getElementById('rEng').checked=false;
+  document.getElementById('rSco').checked=false;
+  document.getElementById('rWal').checked=false;
+  document.getElementById('rNI').checked=false;
+  document.getElementById('iNo').checked=false;
+  document.getElementById('iYes').checked=false;
+  document.getElementById('fIELTS').value='';
+  document.getElementById('fUGIELTS').value='';
+  document.getElementById('scoreRow').style.display='none';
+  document.getElementById('gradeLabel').textContent='';
+  document.getElementById('sortBy').value='default';
+  region='all';
+  document.querySelectorAll('.qtag').forEach((t,i)=>t.classList.toggle('on',i===0));
+  page=1;
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
