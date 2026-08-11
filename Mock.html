@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>UKVI / PCI AI Mock Assessment & Compliance Evaluator</title>
   <style>
     :root {
@@ -24,6 +24,7 @@
       margin: 0;
       padding: 0;
       font-family: var(--font-family);
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
@@ -32,36 +33,45 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      overflow-x: hidden;
     }
 
     header {
       background: var(--primary);
       color: #fff;
-      padding: 16px 28px;
+      padding: 14px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
 
     .brand-title {
-      font-size: 1.15rem;
+      font-size: 1rem;
       font-weight: 700;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 60%;
     }
 
     .header-timer {
-      font-size: 0.95rem;
+      font-size: 0.85rem;
       font-weight: 600;
       background: rgba(255,255,255,0.15);
-      padding: 6px 14px;
+      padding: 4px 10px;
       border-radius: 20px;
+      white-space: nowrap;
     }
 
     .container {
       max-width: 960px;
-      margin: 24px auto;
-      padding: 0 20px;
+      margin: 16px auto;
+      padding: 0 12px;
       width: 100%;
       flex: 1;
     }
@@ -69,9 +79,23 @@
     .card {
       background: var(--card-bg);
       border-radius: 12px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.05);
       border: 1px solid var(--border);
-      padding: 32px;
+      padding: 20px 16px;
+    }
+
+    @media (min-width: 768px) {
+      .card {
+        padding: 32px;
+      }
+      .brand-title {
+        font-size: 1.15rem;
+        max-width: none;
+      }
+      .container {
+        margin: 24px auto;
+        padding: 0 20px;
+      }
     }
 
     .screen {
@@ -83,28 +107,39 @@
 
     h1, h2, h3 {
       color: var(--primary-dark);
-      margin-bottom: 12px;
+      margin-bottom: 10px;
+      font-size: 1.25rem;
+    }
+    @media (min-width: 768px) {
+      h1, h2, h3 { font-size: 1.5rem; }
     }
 
     p {
       color: var(--text-muted);
-      line-height: 1.6;
-      margin-bottom: 16px;
+      line-height: 1.5;
+      margin-bottom: 14px;
+      font-size: 0.95rem;
     }
 
     .btn {
       background: var(--primary);
       color: #fff;
       border: none;
-      padding: 12px 24px;
-      font-size: 1rem;
+      padding: 12px 20px;
+      font-size: 0.95rem;
       font-weight: 600;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
       transition: background 0.2s, opacity 0.2s;
+      width: 100%;
+      text-align: center;
+    }
+    @media (min-width: 768px) {
+      .btn { width: auto; }
     }
 
     .btn:disabled {
@@ -124,7 +159,7 @@
     }
 
     .form-group {
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
     label {
@@ -132,18 +167,19 @@
       font-weight: 700;
       margin-bottom: 6px;
       color: var(--text-main);
-      font-size: 0.95rem;
+      font-size: 0.9rem;
     }
 
     input[type="text"] {
       width: 100%;
-      padding: 10px 14px;
+      padding: 12px 14px;
       border: 1px solid var(--border);
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 1rem;
       background: #fff;
       color: var(--text-main);
       outline: none;
+      -webkit-appearance: none;
     }
 
     input[type="text"]:focus {
@@ -154,8 +190,8 @@
     .check-step-card {
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 18px;
-      margin-bottom: 16px;
+      padding: 14px;
+      margin-bottom: 14px;
       background: #f8fafc;
     }
 
@@ -163,18 +199,19 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       font-weight: 700;
       color: var(--primary-dark);
+      font-size: 0.95rem;
     }
 
     .mic-indicator-bar-container {
       width: 100%;
-      height: 14px;
+      height: 12px;
       background: #e2e8f0;
-      border-radius: 7px;
+      border-radius: 6px;
       overflow: hidden;
-      margin-top: 10px;
+      margin-top: 8px;
     }
 
     .mic-indicator-bar {
@@ -189,71 +226,78 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 2px solid var(--border);
-      padding-bottom: 14px;
-      margin-bottom: 20px;
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 6px;
     }
 
     .q-indicator {
-      font-size: 0.95rem;
+      font-size: 0.85rem;
       font-weight: 700;
       color: var(--primary);
       background: #e0f2fe;
-      padding: 4px 12px;
+      padding: 4px 10px;
       border-radius: 6px;
     }
 
     .q-category {
-      font-size: 0.85rem;
+      font-size: 0.75rem;
       font-weight: 600;
       text-transform: uppercase;
       color: #64748b;
     }
 
     .set-tag {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       background: #e2e8f0;
       color: #475569;
-      padding: 2px 8px;
+      padding: 2px 6px;
       border-radius: 4px;
       font-weight: 600;
-      margin-left: 8px;
+      margin-left: 6px;
     }
 
     .instruction-banner {
-      font-weight: 600;
-      font-size: 0.95rem;
+      font-weight: 500;
+      font-size: 0.88rem;
       color: #475569;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
+      line-height: 1.4;
     }
 
     .q-text-box {
       background: #f8fafc;
-      border-left: 5px solid var(--primary);
-      padding: 20px;
+      border-left: 4px solid var(--primary);
+      padding: 14px;
       border-radius: 0 8px 8px 0;
-      margin-bottom: 24px;
-      font-size: 1.25rem;
+      margin-bottom: 16px;
+      font-size: 1.05rem;
       font-weight: 600;
       color: #0f172a;
-      line-height: 1.5;
+      line-height: 1.4;
+    }
+    @media (min-width: 768px) {
+      .q-text-box { font-size: 1.2rem; padding: 18px; }
     }
 
     .status-panel {
       border: 1px solid var(--border);
       background: #ffffff;
       border-radius: 8px;
-      padding: 18px;
-      margin-bottom: 20px;
+      padding: 14px;
+      margin-bottom: 16px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
 
     .status-header {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       font-weight: 700;
-      font-size: 1rem;
+      font-size: 0.95rem;
     }
 
     .status-badge {
@@ -263,8 +307,8 @@
     }
 
     .pulse-dot {
-      width: 12px;
-      height: 12px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
       background: var(--text-muted);
     }
@@ -288,9 +332,9 @@
 
     .progress-bar-container {
       width: 100%;
-      height: 10px;
+      height: 8px;
       background: #e2e8f0;
-      border-radius: 5px;
+      border-radius: 4px;
       overflow: hidden;
     }
 
@@ -309,13 +353,13 @@
       background: #f8fafc;
       border: 1px dashed var(--border);
       border-radius: 8px;
-      padding: 12px;
-      min-height: 70px;
+      padding: 10px;
+      margin-bottom: 16px;
     }
 
     .transcript-box textarea {
       width: 100%;
-      height: 70px;
+      height: 90px;
       border: none;
       background: transparent;
       resize: vertical;
@@ -326,20 +370,34 @@
 
     .controls-row {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 20px;
+      flex-direction: column;
+      gap: 10px;
+    }
+    @media (min-width: 768px) {
+      .controls-row {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
     }
 
     /* EVALUATION RESULTS STYLING */
     .verdict-banner {
-      padding: 20px;
+      padding: 16px;
       border-radius: 8px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
+      flex-direction: column;
+      gap: 10px;
       color: #fff;
+    }
+    @media (min-width: 768px) {
+      .verdict-banner {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px;
+      }
     }
     .verdict-pass {
       background: linear-gradient(135deg, #059669, #10b981);
@@ -355,22 +413,29 @@
       background: #fef2f2;
       border: 2px solid #ef4444;
       border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 24px;
+      padding: 14px;
+      margin-bottom: 20px;
       color: #991b1b;
+      font-size: 0.9rem;
     }
 
     .rubric-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px;
-      margin: 20px 0;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin: 16px 0;
+    }
+    @media (min-width: 640px) {
+      .rubric-grid {
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 16px;
+      }
     }
 
     .rubric-card {
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 16px;
+      padding: 14px;
       background: #f8fafc;
     }
 
@@ -378,34 +443,34 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       font-weight: 700;
     }
 
     .pill-pass {
       background: #dcfce7;
       color: #15803d;
-      padding: 2px 8px;
+      padding: 2px 6px;
       border-radius: 4px;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 700;
       text-transform: uppercase;
     }
     .pill-borderline {
       background: #fef3c7;
       color: #b45309;
-      padding: 2px 8px;
+      padding: 2px 6px;
       border-radius: 4px;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 700;
       text-transform: uppercase;
     }
     .pill-fail {
       background: #fee2e2;
       color: #b91c1c;
-      padding: 2px 8px;
+      padding: 2px 6px;
       border-radius: 4px;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 700;
       text-transform: uppercase;
     }
@@ -413,42 +478,60 @@
     .eval-card {
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 18px;
-      margin-bottom: 16px;
+      padding: 14px;
+      margin-bottom: 14px;
       background: #fff;
     }
 
     .eval-card-header {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 10px;
+      align-items: flex-start;
+      margin-bottom: 8px;
       font-weight: 700;
+      flex-wrap: wrap;
+      gap: 6px;
+      font-size: 0.9rem;
     }
 
     .subtier-badge {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: #475569;
       background: #f1f5f9;
       padding: 4px 8px;
       border-radius: 4px;
       margin-top: 6px;
       display: inline-block;
+      line-height: 1.4;
     }
 
     .benchmark-box {
       background: #f0fdf4;
       border-left: 4px solid var(--success);
-      padding: 10px 14px;
+      padding: 10px;
       font-size: 0.85rem;
       color: #166534;
       margin-top: 10px;
       border-radius: 0 4px 4px 0;
+      line-height: 1.4;
     }
 
     audio {
       margin-top: 8px;
       width: 100%;
       height: 36px;
+    }
+
+    .results-btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    @media (min-width: 768px) {
+      .results-btn-group {
+        flex-direction: row;
+      }
     }
   </style>
 </head>
@@ -481,9 +564,9 @@
         <div class="check-step-card">
           <div class="check-step-header">
             <span>Microphone Authorization</span>
-            <span id="mic-status-badge" style="color: var(--text-muted); font-size: 0.85rem;">Not Connected</span>
+            <span id="mic-status-badge" style="color: var(--text-muted); font-size: 0.8rem;">Not Connected</span>
           </div>
-          <p style="font-size: 0.9rem; margin-bottom: 10px;">Click to authorize your microphone. This single permission will remain active throughout all 10 questions.</p>
+          <p style="font-size: 0.88rem; margin-bottom: 8px;">Tap to authorize your microphone. This permission remains active throughout all 10 questions.</p>
           <button class="btn btn-secondary" id="grant-mic-btn" onclick="requestMicPermission()">Enable & Test Microphone</button>
           
           <div class="mic-indicator-bar-container" id="mic-meter-wrapper" style="display: none;">
@@ -495,13 +578,13 @@
         <div class="check-step-card">
           <div class="check-step-header">
             <span>Speaker Sound Test</span>
-            <span id="sound-status-badge" style="color: var(--text-muted); font-size: 0.85rem;">Untested</span>
+            <span id="sound-status-badge" style="color: var(--text-muted); font-size: 0.8rem;">Untested</span>
           </div>
-          <p style="font-size: 0.9rem; margin-bottom: 10px;">Play the chime that signals prep and recording transitions.</p>
+          <p style="font-size: 0.88rem; margin-bottom: 8px;">Play the chime that signals prep and recording transitions.</p>
           <button class="btn btn-secondary" onclick="testSpeakerSound()">Play Test Sound</button>
         </div>
 
-        <div style="margin-top: 24px; display: flex; justify-content: flex-end;">
+        <div style="margin-top: 20px;">
           <button class="btn" id="start-exam-btn" disabled onclick="startInterview()">Generate Test & Begin &rarr;</button>
         </div>
       </div>
@@ -517,7 +600,7 @@
         </div>
 
         <div class="instruction-banner">
-          Read the question. You have 8 seconds to formulate your response. When the timer finishes, speak clearly into your microphone for up to 30 seconds.
+          Read the question. You have 8 seconds to prepare. When recording starts, speak clearly into your mobile microphone.
         </div>
 
         <div class="q-text-box" id="q-text-display">Question loading...</div>
@@ -528,20 +611,20 @@
               <div class="pulse-dot" id="status-dot"></div>
               <span id="status-label">Preparation Time</span>
             </div>
-            <div id="countdown-text" style="font-family: monospace; font-size: 1.2rem;">00:08</div>
+            <div id="countdown-text" style="font-family: monospace; font-size: 1.1rem;">00:08</div>
           </div>
           <div class="progress-bar-container">
             <div class="progress-bar" id="status-progress"></div>
           </div>
         </div>
 
-        <div style="font-weight: 600; font-size: 0.85rem; color: #64748b; margin-bottom: 6px;">Live Audio Transcription & Analysis:</div>
+        <div style="font-weight: 600; font-size: 0.82rem; color: #64748b; margin-bottom: 4px;">Live Audio Transcription (Editable):</div>
         <div class="transcript-box">
-          <textarea id="live-transcript" placeholder="Your spoken answer will appear here live..."></textarea>
+          <textarea id="live-transcript" placeholder="Your spoken answer will appear here live... (You can also type or edit text manually if needed)"></textarea>
         </div>
 
         <div class="controls-row">
-          <button class="btn btn-secondary" onclick="skipPreparation()" id="skip-prep-btn">Skip Prep & Start Speaking</button>
+          <button class="btn btn-secondary" onclick="skipPreparation()" id="skip-prep-btn">Skip Prep & Start</button>
           <button class="btn" onclick="submitAndNext()" id="next-btn">Next Question &rarr;</button>
         </div>
       </div>
@@ -554,27 +637,27 @@
         <!-- Final Verdict Banner -->
         <div id="final-verdict-banner" class="verdict-banner">
           <div>
-            <h3 id="verdict-title" style="color: #fff; margin: 0 0 4px 0;">INTERVIEW VERDICT</h3>
-            <p id="verdict-desc" style="color: rgba(255,255,255,0.9); margin: 0; font-size: 0.95rem;">Assessing performance...</p>
+            <h3 id="verdict-title" style="color: #fff; margin: 0 0 4px 0; font-size: 1.1rem;">INTERVIEW VERDICT</h3>
+            <p id="verdict-desc" style="color: rgba(255,255,255,0.9); margin: 0; font-size: 0.88rem;">Assessing performance...</p>
           </div>
-          <div style="font-size: 2.2rem; font-weight: 800;" id="verdict-score">0%</div>
+          <div style="font-size: 2rem; font-weight: 800;" id="verdict-score">0%</div>
         </div>
 
         <!-- Automatic Fail Trigger Box -->
         <div id="auto-fail-container" class="auto-fail-box" style="display: none;">
-          <h4 style="margin-bottom: 6px; font-size: 1rem;">🚨 Automatic Fail / Compliance Refusal Triggered</h4>
-          <ul id="auto-fail-reasons" style="padding-left: 20px; font-size: 0.9rem; line-height: 1.5;"></ul>
+          <h4 style="margin-bottom: 4px; font-size: 0.95rem;">🚨 Automatic Fail / Compliance Refusal Triggered</h4>
+          <ul id="auto-fail-reasons" style="padding-left: 18px; font-size: 0.85rem; line-height: 1.4;"></ul>
         </div>
 
         <!-- 5 Pillars Breakdown Grid -->
-        <h3 style="margin-top: 24px;">5 Core Evaluation Pillars</h3>
+        <h3 style="margin-top: 20px; font-size: 1.1rem;">5 Core Evaluation Pillars</h3>
         <div class="rubric-grid" id="rubric-pillars-grid"></div>
 
-        <h3 style="margin-top: 28px;">Detailed Question Breakdown</h3>
+        <h3 style="margin-top: 24px; font-size: 1.1rem;">Detailed Question Breakdown</h3>
         <div id="evaluation-list"></div>
 
-        <div style="margin-top: 24px; display: flex; gap: 12px;">
-          <button class="btn" onclick="restartTest()">Retake with New Random Questions</button>
+        <div class="results-btn-group">
+          <button class="btn" onclick="restartTest()">Retake New Test</button>
           <button class="btn btn-secondary" onclick="window.print()">Print / Save PDF</button>
         </div>
       </div>
@@ -917,23 +1000,34 @@
 
     // Beep Tone
     function playBeep(freq = 880, duration = 250) {
-      const ctx = audioContext || new (window.AudioContext || window.webkitAudioContext)();
-      if (ctx.state === 'suspended') ctx.resume();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.frequency.value = freq;
-      osc.start();
-      gain.gain.setValueAtTime(0.8, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration/1000);
-      osc.stop(ctx.currentTime + duration/1000);
+      try {
+        const ctx = audioContext || new (window.AudioContext || window.webkitAudioContext)();
+        if (ctx.state === 'suspended') ctx.resume();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.value = freq;
+        osc.start();
+        gain.gain.setValueAtTime(0.8, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration/1000);
+        osc.stop(ctx.currentTime + duration/1000);
+      } catch (e) {
+        console.warn("Audio Context playback restricted or blocked.", e);
+      }
     }
 
     // Mic & Speaker Setup
     async function requestMicPermission() {
       try {
-        globalAudioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        // Mobile-optimized constraint payload for broad device compatibility
+        globalAudioStream = await navigator.mediaDevices.getUserMedia({ 
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true
+          } 
+        });
         micGranted = true;
 
         document.getElementById('mic-status-badge').textContent = '✓ Connected';
@@ -951,19 +1045,21 @@
         visualizeMicInput();
         checkReadyToStart();
       } catch (err) {
-        alert("Microphone access was denied. Please allow microphone permissions in your browser to proceed.");
+        alert("Microphone access was denied or is unsupported on this browser/device. Please check permissions.");
       }
     }
 
     function visualizeMicInput() {
       const dataArray = new Uint8Array(analyserNode.frequencyBinCount);
       function draw() {
+        if (!analyserNode) return;
         analyserNode.getByteFrequencyData(dataArray);
         let sum = 0;
         for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
         let average = sum / dataArray.length;
         let meterWidth = Math.min(100, Math.round(average * 2.5));
-        document.getElementById('mic-meter').style.width = meterWidth + '%';
+        const meter = document.getElementById('mic-meter');
+        if (meter) meter.style.width = meterWidth + '%';
         animationFrameId = requestAnimationFrame(draw);
       }
       draw();
@@ -1030,36 +1126,55 @@
     function loadQuestion(index) {
       clearInterval(timerInterval);
 
-      // Stop any active speech recognition immediately before loading new question
+      // Stop any prior speech recognition safely
       if (recognition) {
         try { recognition.abort(); } catch(e){}
         recognition = null;
       }
       isRecognizing = false;
 
-      // Force-clear the textarea value explicitly
+      // Wipe textarea clean to avoid text carry-over
       const transcriptBox = document.getElementById('live-transcript');
       if (transcriptBox) transcriptBox.value = "";
 
       const q = randomizedQuestions[index];
 
-      // Re-initialize a clean speech recognition instance for this specific question
+      // Fix mobile speech recognition: Robust initialization with interim results and error handling
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (SpeechRecognition) {
         recognition = new SpeechRecognition();
         recognition.continuous = true;
         recognition.interimResults = true;
+        recognition.maxAlternatives = 1;
         recognition.lang = 'en-GB';
 
         recognition.onresult = (event) => {
-          // Only write if we are actively in recording phase for this question
           if (phase !== 'recording') return;
           let freshText = '';
-          for (let i = 0; i < event.results.length; i++) {
-            freshText += event.results[i][0].transcript + ' ';
+          for (let i = event.resultIndex; i < event.results.length; ++i) {
+            freshText += event.results[i][0].transcript;
           }
           const tBox = document.getElementById('live-transcript');
-          if (tBox) tBox.value = freshText.trim();
+          if (tBox && freshText.trim() !== "") {
+            // Append or update smoothly for mobile continuous streaming
+            let existing = tBox.value.trim();
+            tBox.value = existing ? existing + " " + freshText.trim() : freshText.trim();
+          }
+        };
+
+        recognition.onerror = (event) => {
+          console.warn("Speech recognition mobile error notice:", event.error);
+        };
+
+        recognition.onend = () => {
+          // If still in recording phase on mobile browsers that auto-stop, restart recognition seamlessly
+          if (phase === 'recording' && isRecognizing) {
+            try {
+              recognition.start();
+            } catch (e) {
+              console.warn("Could not restart speech recognition automatically:", e);
+            }
+          }
         };
       }
 
@@ -1081,10 +1196,10 @@
       const prog = document.getElementById('status-progress');
       const skipBtn = document.getElementById('skip-prep-btn');
 
-      dot.className = "pulse-dot prep";
-      label.textContent = "Preparation Time";
-      prog.className = "progress-bar";
-      skipBtn.style.display = "inline-flex";
+      if (dot) dot.className = "pulse-dot prep";
+      if (label) label.textContent = "Preparation Time";
+      if (prog) prog.className = "progress-bar";
+      if (skipBtn) skipBtn.style.display = "inline-flex";
 
       updateTimerDisplay();
 
@@ -1117,10 +1232,10 @@
       const prog = document.getElementById('status-progress');
       const skipBtn = document.getElementById('skip-prep-btn');
 
-      dot.className = "pulse-dot recording";
-      label.textContent = "Recording... Answer Now";
-      prog.className = "progress-bar recording";
-      skipBtn.style.display = "none";
+      if (dot) dot.className = "pulse-dot recording";
+      if (label) label.textContent = "Recording... Answer Now";
+      if (prog) prog.className = "progress-bar recording";
+      if (skipBtn) skipBtn.style.display = "none";
 
       updateTimerDisplay();
 
@@ -1165,23 +1280,26 @@
       if (mediaRecorder && mediaRecorder.state !== 'inactive') {
         mediaRecorder.stop();
       }
-      if (recognition && isRecognizing) {
-        try { recognition.stop(); isRecognizing = false; } catch(e){}
+      if (recognition) {
+        isRecognizing = false;
+        try { recognition.stop(); } catch(e){}
       }
 
       const dot = document.getElementById('status-dot');
       const label = document.getElementById('status-label');
-      dot.className = "pulse-dot finished";
-      label.textContent = "Time Elapsed (Complete)";
+      if (dot) dot.className = "pulse-dot finished";
+      if (label) label.textContent = "Time Elapsed (Complete)";
     }
 
     function updateTimerDisplay() {
       const minutes = Math.floor(timeLeft / 60).toString().padStart(2, '0');
       const seconds = (timeLeft % 60).toString().padStart(2, '0');
-      document.getElementById('countdown-text').textContent = `${minutes}:${seconds}`;
+      const countdown = document.getElementById('countdown-text');
+      if (countdown) countdown.textContent = `${minutes}:${seconds}`;
 
       const pct = ((totalPhaseDuration - timeLeft) / totalPhaseDuration) * 100;
-      document.getElementById('status-progress').style.width = `${pct}%`;
+      const progBar = document.getElementById('status-progress');
+      if (progBar) progBar.style.width = `${pct}%`;
     }
 
     function submitAndNext() {
@@ -1190,11 +1308,9 @@
         stopRecordingPhase();
       }
 
-      // Capture current textarea text strictly for this question
       const transcriptBox = document.getElementById('live-transcript');
       const textAnswer = transcriptBox ? transcriptBox.value.trim() : "";
       
-      // Immediately wipe textarea clean to prevent any carry-over
       if (transcriptBox) transcriptBox.value = "";
 
       const currentQ = randomizedQuestions[currentIndex];
@@ -1224,7 +1340,7 @@
     }
 
     /* =========================================================================
-       100-STAGE GRANULAR EVALUATION ENGINE
+       GRANULAR EVALUATION ENGINE
        ========================================================================= */
     function evaluateSingleAnswer(answerText, passKeywords, borderlineKeywords, failKeywords) {
       if (!answerText || answerText.trim() === "") {
@@ -1413,8 +1529,8 @@
             <span><strong>Q${res.num}:</strong> ${res.category} <span class="set-tag">Set ${res.set}</span></span>
             <span class="${qPillClass}">${evalResult.status} (${qScore}%)</span>
           </div>
-          <p style="font-weight: 600; color: #1e293b; margin-bottom: 6px;">${res.question}</p>
-          <div style="background: #f8fafc; padding: 10px; border-radius: 6px; font-size: 0.9rem; margin-bottom: 8px;">
+          <p style="font-weight: 600; color: #1e293b; margin-bottom: 6px; font-size: 0.9rem;">${res.question}</p>
+          <div style="background: #f8fafc; padding: 10px; border-radius: 6px; font-size: 0.88rem; margin-bottom: 8px;">
             <strong>Your Spoken Response:</strong> ${res.userAnswer && res.userAnswer.trim() !== "" ? res.userAnswer : '<span style="color:#ef4444; font-weight:600;">[No speech detected / Blank response]</span>'}
           </div>
           <div class="subtier-badge">
@@ -1462,11 +1578,11 @@
         pCard.className = "rubric-card";
         pCard.innerHTML = `
           <div class="rubric-header">
-            <span style="font-size: 0.95rem; color: var(--primary-dark);">${p.name}</span>
+            <span style="font-size: 0.9rem; color: var(--primary-dark);">${p.name}</span>
             <span class="${pillClass}">${statusText}</span>
           </div>
-          <p style="font-size: 0.8rem; margin: 0; color: var(--text-muted);">${p.desc}</p>
-          <div style="margin-top: 10px; font-weight: 700; font-size: 1.1rem; color: var(--text-main);">${avg}%</div>
+          <p style="font-size: 0.78rem; margin: 0; color: var(--text-muted);">${p.desc}</p>
+          <div style="margin-top: 8px; font-weight: 700; font-size: 1.05rem; color: var(--text-main);">${avg}%</div>
         `;
         pillarsGrid.appendChild(pCard);
       }
@@ -1487,7 +1603,7 @@
         verdictTitle.textContent = "VERDICT: AUTOMATIC FAIL (COMPLIANCE REFUSAL)";
         verdictDesc.textContent = "Admissions compliance disqualification triggered due to statutory UKVI policy violations.";
         autoFailBox.style.display = "block";
-        autoFailUl.innerHTML = autoFailTriggers.map(t => `<li style="margin-bottom: 6px;">${t}</li>`).join('');
+        autoFailUl.innerHTML = autoFailTriggers.map(t => `<li style="margin-bottom: 4px;">${t}</li>`).join('');
       } else if (overallFinalScore >= 75) {
         verdictBanner.className = "verdict-banner verdict-pass";
         verdictTitle.textContent = "VERDICT: EXCELLENT (PASS - CAS RECOMMENDED)";
