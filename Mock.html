@@ -351,21 +351,16 @@
 
     .transcript-box {
       background: #f8fafc;
-      border: 1px dashed var(--border);
+      border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 10px;
+      padding: 12px;
       margin-bottom: 16px;
-    }
-
-    .transcript-box textarea {
-      width: 100%;
-      height: 90px;
-      border: none;
-      background: transparent;
-      resize: vertical;
+      min-height: 80px;
+      max-height: 150px;
+      overflow-y: auto;
       font-size: 0.95rem;
       color: #1e293b;
-      outline: none;
+      line-height: 1.5;
     }
 
     .controls-row {
@@ -560,17 +555,26 @@
           <input type="text" id="course-input" value="MSc Project Management" placeholder="e.g. MSc Data Analytics" />
         </div>
 
-        <!-- Mic Check -->
+        <!-- Mic Check & Playback Test -->
         <div class="check-step-card">
           <div class="check-step-header">
-            <span>Microphone Authorization</span>
+            <span>Microphone Test & Playback Check</span>
             <span id="mic-status-badge" style="color: var(--text-muted); font-size: 0.8rem;">Not Connected</span>
           </div>
-          <p style="font-size: 0.88rem; margin-bottom: 8px;">Tap to authorize your microphone. This permission remains active throughout all 10 questions.</p>
-          <button class="btn btn-secondary" id="grant-mic-btn" onclick="requestMicPermission()">Enable & Test Microphone</button>
+          <p style="font-size: 0.88rem; margin-bottom: 8px;">Record a short sample (e.g., state your name) to test your voice clarity and playback audio before starting.</p>
+          
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
+            <button class="btn btn-secondary" id="grant-mic-btn" onclick="requestMicPermission()" style="flex:1;">1. Enable Mic</button>
+            <button class="btn btn-secondary" id="test-record-btn" disabled onclick="toggleTestRecording()" style="flex:1; background: var(--primary);">2. Record Test (5s)</button>
+          </div>
           
           <div class="mic-indicator-bar-container" id="mic-meter-wrapper" style="display: none;">
             <div class="mic-indicator-bar" id="mic-meter"></div>
+          </div>
+
+          <div id="playback-container" style="display: none; margin-top: 10px;">
+            <p style="font-size: 0.82rem; margin-bottom: 4px; color: var(--primary-dark); font-weight: 600;">3. Listen to your recorded test audio:</p>
+            <audio id="test-audio-playback" controls></audio>
           </div>
         </div>
 
@@ -618,9 +622,9 @@
           </div>
         </div>
 
-        <div style="font-weight: 600; font-size: 0.82rem; color: #64748b; margin-bottom: 4px;">Live Audio Transcription (Editable):</div>
-        <div class="transcript-box">
-          <textarea id="live-transcript" placeholder="Your spoken answer will appear here live... (You can also type or edit text manually if needed)"></textarea>
+        <div style="font-weight: 600; font-size: 0.82rem; color: #64748b; margin-bottom: 4px;">Live Audio Transcription:</div>
+        <div class="transcript-box" id="live-transcript">
+          <span style="color: #94a3b8; font-style: italic;">Your spoken answer will appear here live...</span>
         </div>
 
         <div class="controls-row">
@@ -994,9 +998,15 @@
     let currentChunks = [];
     let currentAudioUrl = null;
 
+    // Setup Test Recording State
+    let testMediaRecorder = null;
+    let testChunks = [];
+    let isTestRecording = false;
+
     // Web Speech API instance
     let recognition = null;
     let isRecognizing = false;
+    let liveTranscriptText = "";
 
     // Beep Tone
     function playBeep(freq = 880, duration = 250) {
@@ -1017,10 +1027,9 @@
       }
     }
 
-    // Mic & Speaker Setup
+    // Mic & Setup Test Audio
     async function requestMicPermission() {
       try {
-        // Mobile-optimized constraint payload for broad device compatibility
         globalAudioStream = await navigator.mediaDevices.getUserMedia({ 
           audio: {
             echoCancellation: true,
@@ -1032,8 +1041,9 @@
 
         document.getElementById('mic-status-badge').textContent = '✓ Connected';
         document.getElementById('mic-status-badge').style.color = 'var(--success)';
-        document.getElementById('grant-mic-btn').textContent = 'Microphone Verified';
+        document.getElementById('grant-mic-btn').textContent = 'Mic Verified';
         document.getElementById('grant-mic-btn').disabled = true;
+        document.getElementById('test-record-btn').disabled = false;
         document.getElementById('mic-meter-wrapper').style.display = 'block';
 
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -1046,6 +1056,43 @@
         checkReadyToStart();
       } catch (err) {
         alert("Microphone access was denied or is unsupported on this browser/device. Please check permissions.");
+      }
+    }
+
+    function toggleTestRecording() {
+      const btn = document.getElementById('test-record-btn');
+      const playbackContainer = document.getElementById('playback-container');
+      const audioPlayback = document.getElementById('test-audio-playback');
+
+      if (!isTestRecording) {
+        // Start 5-second test recording
+        testChunks = [];
+        try {
+          testMediaRecorder = new MediaRecorder(globalAudioStream);
+          testMediaRecorder.ondataavailable = (e) => testChunks.push(e.data);
+          testMediaRecorder.onstop = () => {
+            const blob = new Blob(testChunks, { type: 'audio/webm' });
+            audioPlayback.src = URL.createObjectURL(blob);
+            playbackContainer.style.display = 'block';
+            btn.textContent = '2. Record Test (5s)';
+            btn.style.background = 'var(--primary)';
+            isTestRecording = false;
+          };
+          testMediaRecorder.start();
+          isTestRecording = true;
+          btn.textContent = 'Recording... (Speak Now)';
+          btn.style.background = 'var(--danger)';
+
+          // Auto stop after 5 seconds
+          setTimeout(() => {
+            if (isTestRecording && testMediaRecorder && testMediaRecorder.state !== 'inactive') {
+              testMediaRecorder.stop();
+            }
+          }, 5000);
+        } catch (e) {
+          console.warn("Test recording failed:", e);
+          isTestRecording = false;
+        }
       }
     }
 
@@ -1078,24 +1125,21 @@
       }
     }
 
-    // Random Sequential Question Generator
+    // Question Juggler / Randomizer across the 3 Sets for each question slot (1 to 10)
     function generateRandomSequentialQuestions() {
       const targetUni = document.getElementById('university-input').value.trim() || "Arden University";
       const targetCourse = document.getElementById('course-input').value.trim() || "Postgraduate Program";
 
       const selected = [];
-      let lastSet = null;
+      const setKeys = [1, 2, 3];
 
       for (let qNum = 1; qNum <= 10; qNum++) {
-        const availableSets = [1, 2, 3].filter(s => s !== lastSet);
-        const chosenSet = availableSets[Math.floor(Math.random() * availableSets.length)];
-        lastSet = chosenSet;
-
-        const rawQ = QUESTION_SETS[chosenSet].find(q => q.num === qNum);
+        const randomSetId = setKeys[Math.floor(Math.random() * setKeys.length)];
+        const rawQ = QUESTION_SETS[randomSetId].find(q => q.num === qNum);
 
         selected.push({
           num: qNum,
-          set: chosenSet,
+          set: randomSetId,
           pillarId: rawQ.pillarId,
           category: rawQ.category,
           question: rawQ.question.replace(/{university}/g, targetUni).replace(/{course}/g, targetCourse),
@@ -1126,20 +1170,20 @@
     function loadQuestion(index) {
       clearInterval(timerInterval);
 
-      // Stop any prior speech recognition safely
       if (recognition) {
         try { recognition.abort(); } catch(e){}
         recognition = null;
       }
       isRecognizing = false;
+      liveTranscriptText = "";
 
-      // Wipe textarea clean to avoid text carry-over
       const transcriptBox = document.getElementById('live-transcript');
-      if (transcriptBox) transcriptBox.value = "";
+      if (transcriptBox) {
+        transcriptBox.innerHTML = '<span style="color: #94a3b8; font-style: italic;">Your spoken answer will appear here live...</span>';
+      }
 
       const q = randomizedQuestions[index];
 
-      // Fix mobile speech recognition: Robust initialization with interim results and error handling
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (SpeechRecognition) {
         recognition = new SpeechRecognition();
@@ -1154,11 +1198,13 @@
           for (let i = event.resultIndex; i < event.results.length; ++i) {
             freshText += event.results[i][0].transcript;
           }
-          const tBox = document.getElementById('live-transcript');
-          if (tBox && freshText.trim() !== "") {
-            // Append or update smoothly for mobile continuous streaming
-            let existing = tBox.value.trim();
-            tBox.value = existing ? existing + " " + freshText.trim() : freshText.trim();
+          if (freshText.trim() !== "") {
+            liveTranscriptText = liveTranscriptText ? liveTranscriptText + " " + freshText.trim() : freshText.trim();
+            const tBox = document.getElementById('live-transcript');
+            if (tBox) {
+              tBox.textContent = liveTranscriptText;
+              tBox.scrollTop = tBox.scrollHeight;
+            }
           }
         };
 
@@ -1167,7 +1213,6 @@
         };
 
         recognition.onend = () => {
-          // If still in recording phase on mobile browsers that auto-stop, restart recognition seamlessly
           if (phase === 'recording' && isRecognizing) {
             try {
               recognition.start();
@@ -1308,11 +1353,7 @@
         stopRecordingPhase();
       }
 
-      const transcriptBox = document.getElementById('live-transcript');
-      const textAnswer = transcriptBox ? transcriptBox.value.trim() : "";
-      
-      if (transcriptBox) transcriptBox.value = "";
-
+      const textAnswer = liveTranscriptText.trim();
       const currentQ = randomizedQuestions[currentIndex];
 
       userResponses.push({
@@ -1330,6 +1371,7 @@
       });
 
       currentAudioUrl = null;
+      liveTranscriptText = "";
 
       if (currentIndex + 1 < randomizedQuestions.length) {
         currentIndex++;
