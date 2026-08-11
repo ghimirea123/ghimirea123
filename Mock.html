@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UKVI / PCI AI Mock Assessment & Compliance Evaluator</title>
+  <style>
+    :root {
+      --primary: #004b87;
+      --primary-dark: #002d54;
+      --accent: #e35205;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --border: #e2e8f0;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-family);
+    }
+
+    body {
+      background: #f1f5f9;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: var(--primary);
+      color: #fff;
+      padding: 16px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
+
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .header-timer {
+      font-size: 0.95rem;
+      font-weight: 600;
+      background: rgba(255,255,255,0.15);
+      padding: 6px 14px;
+      border-radius: 20px;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 24px auto;
+      padding: 0 20px;
+      width: 100%;
+      flex: 1;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+      border: 1px solid var(--border);
+      padding: 32px;
+    }
+
+    .screen {
+      display: none;
+    }
+    .screen.active {
+      display: block;
+    }
+
+    h1, h2, h3 {
+      color: var(--primary-dark);
+      margin-bottom: 12px;
+    }
+
+    p {
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s, opacity 0.2s;
+    }
+
+    .btn:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .btn:hover:not(:disabled) {
+      background: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background: #64748b;
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background: #475569;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text-main);
+      font-size: 0.95rem;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 1rem;
+      background: #fff;
+      color: var(--text-main);
+      outline: none;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0,75,135,0.1);
+    }
+
+    .check-step-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px;
+      margin-bottom: 16px;
+      background: #f8fafc;
+    }
+
+    .check-step-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .mic-indicator-bar-container {
+      width: 100%;
+      height: 14px;
+      background: #e2e8f0;
+      border-radius: 7px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .mic-indicator-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--success);
+      transition: width 0.08s ease;
+    }
+
+    .exam-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 14px;
+      margin-bottom: 20px;
+    }
+
+    .q-indicator {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--primary);
+      background: #e0f2fe;
+      padding: 4px 12px;
+      border-radius: 6px;
+    }
+
+    .q-category {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #64748b;
+    }
+
+    .set-tag {
+      font-size: 0.75rem;
+      background: #e2e8f0;
+      color: #475569;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+
+    .instruction-banner {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #475569;
+      margin-bottom: 14px;
+    }
+
+    .q-text-box {
+      background: #f8fafc;
+      border-left: 5px solid var(--primary);
+      padding: 20px;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 24px;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #0f172a;
+      line-height: 1.5;
+    }
+
+    .status-panel {
+      border: 1px solid var(--border);
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 18px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .status-header {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pulse-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--text-muted);
+    }
+    .pulse-dot.prep {
+      background: var(--warning);
+      animation: pulse 1s infinite;
+    }
+    .pulse-dot.recording {
+      background: var(--danger);
+      animation: pulse 0.7s infinite;
+    }
+    .pulse-dot.finished {
+      background: var(--success);
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.4; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.1); }
+      100% { opacity: 0.4; transform: scale(0.9); }
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 10px;
+      background: #e2e8f0;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--primary);
+      transition: width 0.1s linear;
+    }
+
+    .progress-bar.recording {
+      background: var(--danger);
+    }
+
+    .transcript-box {
+      background: #f8fafc;
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      min-height: 70px;
+    }
+
+    .transcript-box textarea {
+      width: 100%;
+      height: 70px;
+      border: none;
+      background: transparent;
+      resize: vertical;
+      font-size: 0.95rem;
+      color: #1e293b;
+      outline: none;
+    }
+
+    .controls-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    /* EVALUATION RESULTS STYLING */
+    .verdict-banner {
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #fff;
+    }
+    .verdict-pass {
+      background: linear-gradient(135deg, #059669, #10b981);
+    }
+    .verdict-borderline {
+      background: linear-gradient(135deg, #d97706, #f59e0b);
+    }
+    .verdict-fail {
+      background: linear-gradient(135deg, #b91c1c, #ef4444);
+    }
+
+    .auto-fail-box {
+      background: #fef2f2;
+      border: 2px solid #ef4444;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 24px;
+      color: #991b1b;
+    }
+
+    .rubric-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .rubric-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      background: #f8fafc;
+    }
+
+    .rubric-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .pill-pass {
+      background: #dcfce7;
+      color: #15803d;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .pill-borderline {
+      background: #fef3c7;
+      color: #b45309;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .pill-fail {
+      background: #fee2e2;
+      color: #b91c1c;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .eval-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px;
+      margin-bottom: 16px;
+      background: #fff;
+    }
+
+    .eval-card-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .subtier-badge {
+      font-size: 0.8rem;
+      color: #475569;
+      background: #f1f5f9;
+      padding: 4px 8px;
+      border-radius: 4px;
+      margin-top: 6px;
+      display: inline-block;
+    }
+
+    .benchmark-box {
+      background: #f0fdf4;
+      border-left: 4px solid var(--success);
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      color: #166534;
+      margin-top: 10px;
+      border-radius: 0 4px 4px 0;
+    }
+
+    audio {
+      margin-top: 8px;
+      width: 100%;
+      height: 36px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand-title" id="header-title">UKVI / Credibility Assessment (PCI)</div>
+    <div class="header-timer" id="global-status">Equipment Setup</div>
+  </header>
+
+  <div class="container">
+    <div class="card">
+
+      <!-- STEP 1: Institution & Audio Authorization Setup -->
+      <div id="screen-setup" class="screen active">
+        <h2>Credibility Interview Simulation Setup</h2>
+        <p>Your responses will be graded strictly on UKVI compliance rubrics across all 5 Pillars.</p>
+
+        <div class="form-group">
+          <label for="university-input">Target Institution:</label>
+          <input type="text" id="university-input" value="Arden University" placeholder="e.g. Arden University" />
+        </div>
+
+        <div class="form-group">
+          <label for="course-input">Target Program / Course Name:</label>
+          <input type="text" id="course-input" value="MSc Project Management" placeholder="e.g. MSc Data Analytics" />
+        </div>
+
+        <!-- Mic Check -->
+        <div class="check-step-card">
+          <div class="check-step-header">
+            <span>Microphone Authorization</span>
+            <span id="mic-status-badge" style="color: var(--text-muted); font-size: 0.85rem;">Not Connected</span>
+          </div>
+          <p style="font-size: 0.9rem; margin-bottom: 10px;">Click to authorize your microphone. This single permission will remain active throughout all 10 questions.</p>
+          <button class="btn btn-secondary" id="grant-mic-btn" onclick="requestMicPermission()">Enable & Test Microphone</button>
+          
+          <div class="mic-indicator-bar-container" id="mic-meter-wrapper" style="display: none;">
+            <div class="mic-indicator-bar" id="mic-meter"></div>
+          </div>
+        </div>
+
+        <!-- Speaker Check -->
+        <div class="check-step-card">
+          <div class="check-step-header">
+            <span>Speaker Sound Test</span>
+            <span id="sound-status-badge" style="color: var(--text-muted); font-size: 0.85rem;">Untested</span>
+          </div>
+          <p style="font-size: 0.9rem; margin-bottom: 10px;">Play the chime that signals prep and recording transitions.</p>
+          <button class="btn btn-secondary" onclick="testSpeakerSound()">Play Test Sound</button>
+        </div>
+
+        <div style="margin-top: 24px; display: flex; justify-content: flex-end;">
+          <button class="btn" id="start-exam-btn" disabled onclick="startInterview()">Generate Test & Begin &rarr;</button>
+        </div>
+      </div>
+
+      <!-- STEP 2: Unified Interview Viewport -->
+      <div id="screen-exam" class="screen">
+        <div class="exam-nav">
+          <span class="q-indicator" id="q-number-display">Question 1 of 10</span>
+          <div>
+            <span class="q-category" id="q-category-display">Category</span>
+            <span class="set-tag" id="q-set-display">Set 1</span>
+          </div>
+        </div>
+
+        <div class="instruction-banner">
+          Read the question. You have 8 seconds to formulate your response. When the timer finishes, speak clearly into your microphone for up to 30 seconds.
+        </div>
+
+        <div class="q-text-box" id="q-text-display">Question loading...</div>
+
+        <div class="status-panel">
+          <div class="status-header">
+            <div class="status-badge">
+              <div class="pulse-dot" id="status-dot"></div>
+              <span id="status-label">Preparation Time</span>
+            </div>
+            <div id="countdown-text" style="font-family: monospace; font-size: 1.2rem;">00:08</div>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar" id="status-progress"></div>
+          </div>
+        </div>
+
+        <div style="font-weight: 600; font-size: 0.85rem; color: #64748b; margin-bottom: 6px;">Live Audio Transcription & Analysis:</div>
+        <div class="transcript-box">
+          <textarea id="live-transcript" placeholder="Your spoken answer will appear here live..."></textarea>
+        </div>
+
+        <div class="controls-row">
+          <button class="btn btn-secondary" onclick="skipPreparation()" id="skip-prep-btn">Skip Prep & Start Speaking</button>
+          <button class="btn" onclick="submitAndNext()" id="next-btn">Next Question &rarr;</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: Evaluation & Rubric Diagnostic Report -->
+      <div id="screen-results" class="screen">
+        <h2>PCI Credibility Assessment Outcome</h2>
+        <p>Comprehensive performance review based on UKVI compliance standards.</p>
+
+        <!-- Final Verdict Banner -->
+        <div id="final-verdict-banner" class="verdict-banner">
+          <div>
+            <h3 id="verdict-title" style="color: #fff; margin: 0 0 4px 0;">INTERVIEW VERDICT</h3>
+            <p id="verdict-desc" style="color: rgba(255,255,255,0.9); margin: 0; font-size: 0.95rem;">Assessing performance...</p>
+          </div>
+          <div style="font-size: 2.2rem; font-weight: 800;" id="verdict-score">0%</div>
+        </div>
+
+        <!-- Automatic Fail Trigger Box -->
+        <div id="auto-fail-container" class="auto-fail-box" style="display: none;">
+          <h4 style="margin-bottom: 6px; font-size: 1rem;">🚨 Automatic Fail / Compliance Refusal Triggered</h4>
+          <ul id="auto-fail-reasons" style="padding-left: 20px; font-size: 0.9rem; line-height: 1.5;"></ul>
+        </div>
+
+        <!-- 5 Pillars Breakdown Grid -->
+        <h3 style="margin-top: 24px;">5 Core Evaluation Pillars</h3>
+        <div class="rubric-grid" id="rubric-pillars-grid"></div>
+
+        <h3 style="margin-top: 28px;">Detailed Question Breakdown</h3>
+        <div id="evaluation-list"></div>
+
+        <div style="margin-top: 24px; display: flex; gap: 12px;">
+          <button class="btn" onclick="restartTest()">Retake with New Random Questions</button>
+          <button class="btn btn-secondary" onclick="window.print()">Print / Save PDF</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const QUESTION_SETS = {
+      1: [
+        {
+          num: 1,
+          pillarId: 1,
+          category: "Academic Intent",
+          question: "What primary academic and professional factors motivated your decision to pursue higher education in the United Kingdom rather than in your home country or other global destinations?",
+          passKeywords: ["one-year", "1 year", "master", "globally recognized", "curriculum", "fast-track", "career progression", "roi", "quality"],
+          borderlineKeywords: ["ranking", "good country", "english", "better education", "reputation"],
+          failKeywords: ["earn money", "settle", "work permit", "migrate", "stay there"],
+          modelAnswer: "The UK offers an intensive, globally recognized one-year postgraduate degree compared to multi-year programs elsewhere. It combines academic rigor with industry-led frameworks, allowing me to accelerate my career progression and achieve a faster return on investment."
+        },
+        {
+          num: 2,
+          pillarId: 2,
+          category: "Institutional Choice",
+          question: "What specific institutional attributes led you to prioritize {university} over other higher education providers you evaluated?",
+          passKeywords: ["facilities", "faculty", "flexible", "curriculum", "support", "tuition value", "accreditation", "compared"],
+          borderlineKeywords: ["ranking", "good", "friend recommended", "nice university"],
+          failKeywords: ["agent chose", "agent told me", "easy admission"],
+          modelAnswer: "I chose {university} due to its career-focused pedagogy, industry-aligned syllabus, dedicated academic support, and competitive tuition value compared to other UK institutions I evaluated."
+        },
+        {
+          num: 3,
+          pillarId: 2,
+          category: "Curriculum Alignment",
+          question: "How does the structure and academic curriculum of your chosen program align with your professional learning objectives?",
+          passKeywords: ["modules", "syllabus", "credits", "project", "frameworks", "practical", "strategy", "dissertation"],
+          borderlineKeywords: ["study hard", "learn business", "gain knowledge"],
+          failKeywords: ["don't know", "haven't checked", "agent decided"],
+          modelAnswer: "The curriculum of {course} is structured around core practical modules that directly address industry skill demands, bridging my foundational knowledge with advanced methodologies required for senior roles."
+        },
+        {
+          num: 4,
+          pillarId: 3,
+          category: "Funding & Sponsorship",
+          question: "How do you intend to fund your tuition fees and living expenses, and could you outline the occupation and annual income of your financial sponsor?",
+          passKeywords: ["pounds", "£", "tuition", "sponsor", "annual income", "occupation", "savings", "bank", "28 days", "funds"],
+          borderlineKeywords: ["family", "father", "money is ready", "loan"],
+          failKeywords: ["work part time to pay tuition", "part-time job", "will find job to pay", "don't know the fees"],
+          modelAnswer: "My tuition fees and maintenance expenses are fully covered by my primary sponsor, who works as a senior professional with an annual income that comfortably supports my studies, held in an official bank account fulfilling UKVI 28-day holding rules."
+        },
+        {
+          num: 5,
+          pillarId: 3,
+          category: "Accommodation Strategy",
+          question: "What specific accommodation arrangements have you secured for your stay, and how will this environment support your academic focus and personal well-being?",
+          passKeywords: ["student accommodation", "halls", "rent", "bills", "location", "commute", "private apartment", "deposit", "quiet"],
+          borderlineKeywords: ["stay with friends", "hotel", "will search later"],
+          failKeywords: ["no idea", "anywhere", "don't have place"],
+          modelAnswer: "I have arranged accommodation near the campus with dedicated quiet study zones and high-speed internet, ensuring a secure living space with minimal commute time to maximize my academic focus."
+        },
+        {
+          num: 6,
+          pillarId: 5,
+          category: "Time Management",
+          question: "What systematic time-management techniques will you utilize to effectively balance your academic workload with personal responsibilities?",
+          passKeywords: ["time-blocking", "planner", "prioritization", "deadlines", "hours", "schedule", "independent study"],
+          borderlineKeywords: ["hard work", "focus", "manage well"],
+          failKeywords: ["no plan", "free time"],
+          modelAnswer: "I utilize digital planning tools and time-blocking techniques to allocate 35-40 hours weekly for lectures and independent research, prioritizing assessment milestones well in advance."
+        },
+        {
+          num: 7,
+          pillarId: 4,
+          category: "Long-Term Career Pathways",
+          question: "What are your defined career goals following graduation, and how does this specific qualification facilitate that trajectory?",
+          passKeywords: ["return", "home country", "manager", "consultant", "firm", "role", "salary", "progression", "5 years"],
+          borderlineKeywords: ["get a job", "work hard", "good salary"],
+          failKeywords: ["stay in uk permanently", "pr", "settlement", "never go back"],
+          modelAnswer: "Post-graduation, I plan to return to my home country to assume a managerial role within reputable multinational corporations, where a UK postgraduate credential commands a significant salary premium."
+        },
+        {
+          num: 8,
+          pillarId: 1,
+          category: "Professional Networking",
+          question: "What proactive strategies will you employ to build meaningful professional networks and industry connections during your time in the UK?",
+          passKeywords: ["workshops", "guest lectures", "societies", "industry", "linkedin", "seminars", "collaborate"],
+          borderlineKeywords: ["meet people", "make friends"],
+          failKeywords: ["not interested", "none"],
+          modelAnswer: "I plan to actively participate in institutional networking sessions, guest speaker events, and relevant student associations to build enduring connections with peers and industry practitioners."
+        },
+        {
+          num: 9,
+          pillarId: 5,
+          category: "Cultural Adaptation",
+          question: "Could you provide an example of an experience where you successfully adapted to an unfamiliar cultural or social environment?",
+          passKeywords: ["diverse", "team", "communication", "adapt", "collaboration", "respect", "cultural", "experience"],
+          borderlineKeywords: ["easy", "no problem", "friendly"],
+          failKeywords: ["never", "don't like other cultures"],
+          modelAnswer: "During my previous academic and professional projects, I collaborated within culturally diverse teams, where active listening and cultural empathy enabled us to deliver high-quality outcomes smoothly."
+        },
+        {
+          num: 10,
+          pillarId: 1,
+          category: "Influential Literature & Media",
+          question: "Could you discuss a significant book, film, or piece of media that has critically influenced your worldview or professional philosophy?",
+          passKeywords: ["leadership", "management", "strategy", "discipline", "mindset", "book", "article", "philosophy"],
+          borderlineKeywords: ["movies", "internet", "good book"],
+          failKeywords: ["none", "don't read"],
+          modelAnswer: "Reading influential strategic management literature helped shape my analytical problem-solving mindset, reinforcing the value of data-driven decisions and resilient leadership."
+        }
+      ],
+      2: [
+        {
+          num: 1,
+          pillarId: 1,
+          category: "Formative Milestones",
+          question: "Which key personal or professional experiences most significantly influenced your ambition to pursue this course of study in the UK?",
+          passKeywords: ["undergraduate", "bachelor", "work experience", "project", "milestone", "specialization", "gap", "skills"],
+          borderlineKeywords: ["wanted to study", "always interested"],
+          failKeywords: ["free time", "agent advised me"],
+          modelAnswer: "My ambition was sparked during my undergraduate studies and industry experience, where I recognized that advanced postgraduate specialization in the UK would equip me with global best practices."
+        },
+        {
+          num: 2,
+          pillarId: 2,
+          category: "Arden’s Strengths",
+          question: "Which particular strengths and academic facilities of {university} most directly influenced your final enrollment decision?",
+          passKeywords: ["faculty", "portal", "digital", "curriculum", "support", "career", "applied", "accreditation"],
+          borderlineKeywords: ["good university", "affordable", "location"],
+          failKeywords: ["easy visa", "agent applied"],
+          modelAnswer: "{university} stands out for its high-caliber faculty with direct industry experience, accessible digital learning infrastructure, and dedicated career guidance services."
+        },
+        {
+          num: 3,
+          pillarId: 2,
+          category: "Key Modules",
+          question: "Which specific modules or academic components of the syllabus are you most eager to study, and why?",
+          passKeywords: ["module", "analytics", "strategy", "project management", "finance", "dissertation", "skills", "syllabus"],
+          borderlineKeywords: ["all subjects", "general knowledge"],
+          failKeywords: ["haven't seen syllabus", "don't remember"],
+          modelAnswer: "I am most eager to study the core analytical and strategic modules within {course}, as they provide actionable frameworks for solving complex organizational challenges."
+        },
+        {
+          num: 4,
+          pillarId: 3,
+          category: "UKVI Financial Compliance",
+          question: "What research have you conducted regarding UKVI financial requirements, and how will you ensure full compliance with these regulations?",
+          passKeywords: ["28 days", "holding period", "tuition", "maintenance", "bank statement", "funds", "compliance", "ukvi"],
+          borderlineKeywords: ["have enough money", "ready"],
+          failKeywords: ["will work part-time to survive", "borrow from friends in uk"],
+          modelAnswer: "I have researched UKVI financial guidelines thoroughly. All required tuition fees and monthly maintenance funds have been maintained in an eligible bank account for over 28 consecutive days."
+        },
+        {
+          num: 5,
+          pillarId: 3,
+          category: "Contingency Planning",
+          question: "What financial contingency measures do you have in place to manage unforeseen expenses or emergencies during your stay in the UK?",
+          passKeywords: ["emergency reserve", "sponsor", "ihs", "healthcare", "savings", "backup funds", "unforeseen"],
+          borderlineKeywords: ["ask parents", "manage somehow"],
+          failKeywords: ["public funds", "government benefits", "work overtime unlawfully"],
+          modelAnswer: "My sponsor has established an emergency reserve fund in addition to my primary maintenance funds, and I have paid the Immigration Health Surcharge to cover medical contingencies."
+        },
+        {
+          num: 6,
+          pillarId: 3,
+          category: "Work Regulations Awareness",
+          question: "What is your understanding of the statutory working hour limitations and visa restrictions governing international students in the UK?",
+          passKeywords: ["20 hours", "term-time", "full-time", "vacation", "no self-employment", "no public funds", "compliance"],
+          borderlineKeywords: ["part time work", "can work"],
+          failKeywords: ["unlimited hours", "can work full time term time", "deliveroo self employed"],
+          modelAnswer: "Under Student Visa regulations, I am permitted to work a maximum of 20 hours per week during term time and full-time during official vacation periods. I cannot be self-employed or claim public funds."
+        },
+        {
+          num: 7,
+          pillarId: 4,
+          category: "Post-Graduation Intentions",
+          question: "What are your immediate plans upon course completion regarding returning to your home country, remaining in the UK, or relocating internationally?",
+          passKeywords: ["return", "home country", "career", "corporate", "firms", "apply knowledge", "leadership"],
+          borderlineKeywords: ["graduate route", "look for opportunities"],
+          failKeywords: ["stay in uk forever", "asylum", "never return home"],
+          modelAnswer: "Upon completion, my immediate plan is to return to my home market to leverage my UK degree for leadership positions within top-tier national and multinational firms."
+        },
+        {
+          num: 8,
+          pillarId: 4,
+          category: "Employability & ROI",
+          question: "How will the skills acquired through this program enhance your long-term employability and career progression in your home market?",
+          passKeywords: ["roi", "salary", "competitive edge", "promotions", "market demand", "senior", "leadership"],
+          borderlineKeywords: ["good job", "earn more"],
+          failKeywords: ["no idea", "degree doesn't matter"],
+          modelAnswer: "The international exposure and rigorous analytical skills acquired will give me a significant competitive edge, allowing me to access senior-level vacancies with premium remuneration."
+        },
+        {
+          num: 9,
+          pillarId: 5,
+          category: "Social Integration",
+          question: "How do you plan to engage with the university community and establish a supportive social network while living in the UK?",
+          passKeywords: ["societies", "campus", "study groups", "events", "orientation", "community", "peers"],
+          borderlineKeywords: ["talk to people", "make friends"],
+          failKeywords: ["stay alone", "not interested"],
+          modelAnswer: "I plan to participate in student societies, academic study circles, and campus orientation events to foster a collaborative and diverse peer support network."
+        },
+        {
+          num: 10,
+          pillarId: 1,
+          category: "Academic Resilience",
+          question: "Could you describe a significant academic challenge you have encountered in the past and explain the methodology you used to overcome it?",
+          passKeywords: ["methodology", "challenge", "consulted", "structured study", "perseverance", "solution", "improved"],
+          borderlineKeywords: ["studied hard", "passed"],
+          failKeywords: ["paid someone to do it", "cheated"],
+          modelAnswer: "When faced with complex quantitative coursework previously, I broke the syllabus into manageable daily goals, consulted professors during office hours, and achieved top marks."
+        }
+      ],
+      3: [
+        {
+          num: 1,
+          pillarId: 1,
+          category: "Global Perspective",
+          question: "In what ways do you anticipate that studying within the UK higher education system will broaden your global perspective?",
+          passKeywords: ["multicultural", "global standards", "diverse viewpoints", "cross-cultural", "international", "collaboration"],
+          borderlineKeywords: ["meet foreigners", "travel"],
+          failKeywords: ["only work", "nothing special"],
+          modelAnswer: "Studying in the UK provides direct exposure to multicultural viewpoints and global academic standards, enriching my strategic problem-solving capabilities."
+        },
+        {
+          num: 2,
+          pillarId: 2,
+          category: "Alternative Universities",
+          question: "Which other institutions did you evaluate during your initial research, and what criteria led you to finalize your choice?",
+          passKeywords: ["evaluated", "compared", "criteria", "curriculum", "tuition", "location", "leeds", "coventry", "manchester", "birmingham"],
+          borderlineKeywords: ["saw other universities", "chose this one"],
+          failKeywords: ["agent applied to random ones", "did not research"],
+          modelAnswer: "I evaluated alternatives like Coventry and University of Hertfordshire, but finalized {university} due to its specific curriculum design, tuition structure, and focus on practical application."
+        },
+        {
+          num: 3,
+          pillarId: 2,
+          category: "Pedagogy & Faculty",
+          question: "How do the teaching methodology, faculty expertise, and delivery model of this program support your preferred learning style?",
+          passKeywords: ["interactive", "case studies", "practical", "faculty expertise", "seminars", "hands-on", "learning style"],
+          borderlineKeywords: ["lectures", "teachers"],
+          failKeywords: ["don't care", "just need certificate"],
+          modelAnswer: "The program uses interactive seminars and case-study pedagogy, which aligns with my hands-on learning style and allows me to apply theory directly to real-world scenarios."
+        },
+        {
+          num: 4,
+          pillarId: 5,
+          category: "English Language Preparation",
+          question: "What concrete steps have you taken to enhance your English language proficiency in preparation for academic study in the UK?",
+          passKeywords: ["ielts", "academic reading", "journals", "writing", "speaking", "proficiency", "practice"],
+          borderlineKeywords: ["watch movies", "english ok"],
+          failKeywords: ["someone gave test for me", "proxy"],
+          modelAnswer: "I have prepared through standardized language proficiency assessments, extensive reading of academic journals, and formal writing practice to ensure fluent academic performance."
+        },
+        {
+          num: 5,
+          pillarId: 3,
+          category: "Immigration History",
+          question: "Have you ever received an entry clearance or visa refusal for any country, and if applicable, what were the official grounds provided?",
+          passKeywords: ["refusal", "clean record", "disclosure", "compliance", "genuine", "honest", "no refusals"],
+          borderlineKeywords: ["never had issue", "all good"],
+          failKeywords: ["hide refusal", "lied on application"],
+          modelAnswer: "I have maintained a clean international travel record with no prior visa refusals to the UK or any other destination, remaining fully committed to immigration compliance."
+        },
+        {
+          num: 6,
+          pillarId: 4,
+          category: "Necessity of UK Work Experience",
+          question: "Do you consider practical work experience within the UK essential for your career development, or do you intend to seek exposure elsewhere?",
+          passKeywords: ["academic priority", "graduate route optional", "home country focus", "long-term", "career"],
+          borderlineKeywords: ["maybe work", "gain experience"],
+          failKeywords: ["must work in uk to survive", "won't return home without job"],
+          modelAnswer: "My primary focus is academic achievement. While the Graduate Route offers valuable post-study exposure, my long-term career progression is centered in my home country's market."
+        },
+        {
+          num: 7,
+          pillarId: 4,
+          category: "Professional & Cultural Value of Work",
+          question: "How might practical or part-time work experience in the UK contribute to your cultural adaptation and broader professional development?",
+          passKeywords: ["workplace etiquette", "communication", "time management", "professionalism", "permitted hours"],
+          borderlineKeywords: ["earn money", "talk to people"],
+          failKeywords: ["full time work", "cash in hand jobs"],
+          modelAnswer: "Part-time work within permitted visa limits allows students to understand British workplace etiquette, build teamwork skills, and adapt faster to everyday professional environments."
+        },
+        {
+          num: 8,
+          pillarId: 4,
+          category: "Societal & Community Contribution",
+          question: "How do you intend to apply the knowledge and international perspective gained in the UK to benefit your local community or industry?",
+          passKeywords: ["knowledge transfer", "mentorship", "local industry", "best practices", "economic development"],
+          borderlineKeywords: ["help people", "do good work"],
+          failKeywords: ["not going back", "don't care"],
+          modelAnswer: "I plan to implement international operational standards in my local industry upon my return, mentoring young professionals and contributing to economic efficiency."
+        },
+        {
+          num: 9,
+          pillarId: 5,
+          category: "Cultural Exploration",
+          question: "Aside from your academic pursuits, which cultural or culinary experiences in the UK are you interested in exploring to aid your social integration?",
+          passKeywords: ["landmarks", "museums", "historical sites", "diversity", "heritage", "cuisine", "integration"],
+          borderlineKeywords: ["places", "food"],
+          failKeywords: ["nothing", "only stay home"],
+          modelAnswer: "I look forward to visiting historical landmarks, exploring renowned museums, and experiencing the UK's regional diversity to foster a broad cultural appreciation."
+        },
+        {
+          num: 10,
+          pillarId: 1,
+          category: "Personal Fulfillment",
+          question: "Could you share a meaningful personal accomplishment or experience that provided you with a deep sense of fulfillment and resilience?",
+          passKeywords: ["accomplishment", "resilience", "leadership", "perseverance", "milestone", "community", "success"],
+          borderlineKeywords: ["did a good job", "finished school"],
+          failKeywords: ["nothing", "no accomplishment"],
+          modelAnswer: "Leading a challenging community project under tight constraints taught me perseverance, strategic coordination, and the fulfillment of seeing collaborative efforts succeed."
+        }
+      ]
+    };
+
+    // State
+    let randomizedQuestions = [];
+    let currentIndex = 0;
+    let phase = 'idle';
+    let timerInterval = null;
+    let timeLeft = 0;
+    let totalPhaseDuration = 0;
+    let userResponses = [];
+
+    // Hardware Audio & Media
+    let globalAudioStream = null;
+    let audioContext = null;
+    let analyserNode = null;
+    let animationFrameId = null;
+    let micGranted = false;
+    let mediaRecorder = null;
+    let currentChunks = [];
+    let currentAudioUrl = null;
+
+    // Web Speech API instance
+    let recognition = null;
+    let isRecognizing = false;
+
+    // Beep Tone
+    function playBeep(freq = 880, duration = 250) {
+      const ctx = audioContext || new (window.AudioContext || window.webkitAudioContext)();
+      if (ctx.state === 'suspended') ctx.resume();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = freq;
+      osc.start();
+      gain.gain.setValueAtTime(0.8, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration/1000);
+      osc.stop(ctx.currentTime + duration/1000);
+    }
+
+    // Mic & Speaker Setup
+    async function requestMicPermission() {
+      try {
+        globalAudioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        micGranted = true;
+
+        document.getElementById('mic-status-badge').textContent = '✓ Connected';
+        document.getElementById('mic-status-badge').style.color = 'var(--success)';
+        document.getElementById('grant-mic-btn').textContent = 'Microphone Verified';
+        document.getElementById('grant-mic-btn').disabled = true;
+        document.getElementById('mic-meter-wrapper').style.display = 'block';
+
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const source = audioContext.createMediaStreamSource(globalAudioStream);
+        analyserNode = audioContext.createAnalyser();
+        analyserNode.fftSize = 256;
+        source.connect(analyserNode);
+
+        visualizeMicInput();
+        checkReadyToStart();
+      } catch (err) {
+        alert("Microphone access was denied. Please allow microphone permissions in your browser to proceed.");
+      }
+    }
+
+    function visualizeMicInput() {
+      const dataArray = new Uint8Array(analyserNode.frequencyBinCount);
+      function draw() {
+        analyserNode.getByteFrequencyData(dataArray);
+        let sum = 0;
+        for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
+        let average = sum / dataArray.length;
+        let meterWidth = Math.min(100, Math.round(average * 2.5));
+        document.getElementById('mic-meter').style.width = meterWidth + '%';
+        animationFrameId = requestAnimationFrame(draw);
+      }
+      draw();
+    }
+
+    function testSpeakerSound() {
+      playBeep(700, 300);
+      document.getElementById('sound-status-badge').textContent = '✓ Sound Tested';
+      document.getElementById('sound-status-badge').style.color = 'var(--success)';
+      checkReadyToStart();
+    }
+
+    function checkReadyToStart() {
+      if (micGranted) {
+        document.getElementById('start-exam-btn').disabled = false;
+      }
+    }
+
+    // Random Sequential Question Generator
+    function generateRandomSequentialQuestions() {
+      const targetUni = document.getElementById('university-input').value.trim() || "Arden University";
+      const targetCourse = document.getElementById('course-input').value.trim() || "Postgraduate Program";
+
+      const selected = [];
+      let lastSet = null;
+
+      for (let qNum = 1; qNum <= 10; qNum++) {
+        const availableSets = [1, 2, 3].filter(s => s !== lastSet);
+        const chosenSet = availableSets[Math.floor(Math.random() * availableSets.length)];
+        lastSet = chosenSet;
+
+        const rawQ = QUESTION_SETS[chosenSet].find(q => q.num === qNum);
+
+        selected.push({
+          num: qNum,
+          set: chosenSet,
+          pillarId: rawQ.pillarId,
+          category: rawQ.category,
+          question: rawQ.question.replace(/{university}/g, targetUni).replace(/{course}/g, targetCourse),
+          passKeywords: rawQ.passKeywords,
+          borderlineKeywords: rawQ.borderlineKeywords,
+          failKeywords: rawQ.failKeywords,
+          modelAnswer: rawQ.modelAnswer.replace(/{university}/g, targetUni).replace(/{course}/g, targetCourse)
+        });
+      }
+      return selected;
+    }
+
+    function startInterview() {
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+
+      randomizedQuestions = generateRandomSequentialQuestions();
+      currentIndex = 0;
+      userResponses = [];
+
+      document.getElementById('screen-setup').classList.remove('active');
+      document.getElementById('screen-results').classList.remove('active');
+      document.getElementById('screen-exam').classList.add('active');
+      document.getElementById('global-status').textContent = "Interview in Progress";
+
+      loadQuestion(0);
+    }
+
+    function loadQuestion(index) {
+      clearInterval(timerInterval);
+
+      // Stop any active speech recognition immediately before loading new question
+      if (recognition) {
+        try { recognition.abort(); } catch(e){}
+        recognition = null;
+      }
+      isRecognizing = false;
+
+      // Force-clear the textarea value explicitly
+      const transcriptBox = document.getElementById('live-transcript');
+      if (transcriptBox) transcriptBox.value = "";
+
+      const q = randomizedQuestions[index];
+
+      // Re-initialize a clean speech recognition instance for this specific question
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-GB';
+
+        recognition.onresult = (event) => {
+          // Only write if we are actively in recording phase for this question
+          if (phase !== 'recording') return;
+          let freshText = '';
+          for (let i = 0; i < event.results.length; i++) {
+            freshText += event.results[i][0].transcript + ' ';
+          }
+          const tBox = document.getElementById('live-transcript');
+          if (tBox) tBox.value = freshText.trim();
+        };
+      }
+
+      document.getElementById('q-number-display').textContent = `Question ${q.num} of 10`;
+      document.getElementById('q-category-display').textContent = q.category;
+      document.getElementById('q-set-display').textContent = `Set ${q.set}`;
+      document.getElementById('q-text-display').textContent = q.question;
+
+      startPrepPhase(8);
+    }
+
+    function startPrepPhase(seconds = 8) {
+      phase = 'prep';
+      timeLeft = seconds;
+      totalPhaseDuration = seconds;
+
+      const dot = document.getElementById('status-dot');
+      const label = document.getElementById('status-label');
+      const prog = document.getElementById('status-progress');
+      const skipBtn = document.getElementById('skip-prep-btn');
+
+      dot.className = "pulse-dot prep";
+      label.textContent = "Preparation Time";
+      prog.className = "progress-bar";
+      skipBtn.style.display = "inline-flex";
+
+      updateTimerDisplay();
+
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          startRecordingPhase(30);
+        }
+      }, 1000);
+    }
+
+    function skipPreparation() {
+      if (phase === 'prep') {
+        clearInterval(timerInterval);
+        startRecordingPhase(30);
+      }
+    }
+
+    function startRecordingPhase(seconds = 30) {
+      phase = 'recording';
+      timeLeft = seconds;
+      totalPhaseDuration = seconds;
+
+      playBeep(900, 300);
+
+      const dot = document.getElementById('status-dot');
+      const label = document.getElementById('status-label');
+      const prog = document.getElementById('status-progress');
+      const skipBtn = document.getElementById('skip-prep-btn');
+
+      dot.className = "pulse-dot recording";
+      label.textContent = "Recording... Answer Now";
+      prog.className = "progress-bar recording";
+      skipBtn.style.display = "none";
+
+      updateTimerDisplay();
+
+      if (globalAudioStream) {
+        currentChunks = [];
+        try {
+          mediaRecorder = new MediaRecorder(globalAudioStream);
+          mediaRecorder.ondataavailable = (e) => currentChunks.push(e.data);
+          mediaRecorder.onstop = () => {
+            const blob = new Blob(currentChunks, { type: 'audio/webm' });
+            currentAudioUrl = URL.createObjectURL(blob);
+          };
+          mediaRecorder.start();
+        } catch (e) {
+          console.warn('Recorder issue:', e);
+        }
+      }
+
+      if (recognition) {
+        try { 
+          recognition.start(); 
+          isRecognizing = true; 
+        } catch(e) {
+          console.warn('Speech rec start warning:', e);
+        }
+      }
+
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          stopRecordingPhase();
+        }
+      }, 1000);
+    }
+
+    function stopRecordingPhase() {
+      phase = 'finished';
+      playBeep(440, 200);
+
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+      }
+      if (recognition && isRecognizing) {
+        try { recognition.stop(); isRecognizing = false; } catch(e){}
+      }
+
+      const dot = document.getElementById('status-dot');
+      const label = document.getElementById('status-label');
+      dot.className = "pulse-dot finished";
+      label.textContent = "Time Elapsed (Complete)";
+    }
+
+    function updateTimerDisplay() {
+      const minutes = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+      const seconds = (timeLeft % 60).toString().padStart(2, '0');
+      document.getElementById('countdown-text').textContent = `${minutes}:${seconds}`;
+
+      const pct = ((totalPhaseDuration - timeLeft) / totalPhaseDuration) * 100;
+      document.getElementById('status-progress').style.width = `${pct}%`;
+    }
+
+    function submitAndNext() {
+      clearInterval(timerInterval);
+      if (phase === 'recording') {
+        stopRecordingPhase();
+      }
+
+      // Capture current textarea text strictly for this question
+      const transcriptBox = document.getElementById('live-transcript');
+      const textAnswer = transcriptBox ? transcriptBox.value.trim() : "";
+      
+      // Immediately wipe textarea clean to prevent any carry-over
+      if (transcriptBox) transcriptBox.value = "";
+
+      const currentQ = randomizedQuestions[currentIndex];
+
+      userResponses.push({
+        num: currentQ.num,
+        set: currentQ.set,
+        pillarId: currentQ.pillarId,
+        category: currentQ.category,
+        question: currentQ.question,
+        userAnswer: textAnswer, 
+        audioUrl: currentAudioUrl,
+        passKeywords: currentQ.passKeywords,
+        borderlineKeywords: currentQ.borderlineKeywords,
+        failKeywords: currentQ.failKeywords,
+        modelAnswer: currentQ.modelAnswer
+      });
+
+      currentAudioUrl = null;
+
+      if (currentIndex + 1 < randomizedQuestions.length) {
+        currentIndex++;
+        loadQuestion(currentIndex);
+      } else {
+        finishAndShowEvaluation();
+      }
+    }
+
+    /* =========================================================================
+       100-STAGE GRANULAR EVALUATION ENGINE
+       ========================================================================= */
+    function evaluateSingleAnswer(answerText, passKeywords, borderlineKeywords, failKeywords) {
+      if (!answerText || answerText.trim() === "") {
+        return {
+          score: 0,
+          tier: "Tier 1: Poor / Non-Compliance",
+          subTier: "Sub-Tier 1A: Fragmented / Zero Input",
+          verdictText: "0%: No speech detected. Complete absence of required response.",
+          status: "Poor (Fail)"
+        };
+      }
+
+      const cleanText = answerText.trim().toLowerCase();
+      const words = cleanText.split(/\s+/).filter(w => w.length > 0);
+      const wc = words.length;
+
+      let passMatches = 0;
+      passKeywords.forEach(k => { if (cleanText.includes(k.toLowerCase())) passMatches++; });
+
+      let failMatches = 0;
+      failKeywords.forEach(k => { if (cleanText.includes(k.toLowerCase())) failMatches++; });
+
+      const hasExactGbp = /£|\bpounds?\b|\b21,500\b|\b20,000\b|\b22,000\b|\b9,207\b|\b1,023\b|\b12,000\b|\b15,000\b/.test(cleanText);
+      const has28Days = /28\s*days?|holding\s*period|28-day/.test(cleanText);
+      const has20Hours = /20\s*hours?|term-time|working\s*limit/.test(cleanText);
+      const hasModules = /module|syllabus|strategic|analytics|dissertation|credits/.test(cleanText);
+      const hasReturn = /return|home\s*country|back\s*home|career|firm|consultant|manager/.test(cleanText);
+
+      if (failMatches > 0 || wc < 15) {
+        if (wc <= 3) {
+          if (/settle|permanent/i.test(cleanText)) return { score: 1, tier: "Tier 1", subTier: "Sub-Tier 1A", verdictText: "1%: 1–3 words; indicates intent to settle permanently.", status: "Poor (Fail)" };
+          if (/asylum|unauthorized/i.test(cleanText)) return { score: 2, tier: "Tier 1", subTier: "Sub-Tier 1A", verdictText: "2%: 1–3 words; mentions studying; claims unauthorized employment.", status: "Poor (Fail)" };
+          return { score: 3, tier: "Tier 1", subTier: "Sub-Tier 1A", verdictText: "3%: 1–3 words; superficial fragment; total lack of substance.", status: "Poor (Fail)" };
+        }
+        if (wc <= 6) {
+          if (/drop out|leave/i.test(cleanText)) return { score: 4, tier: "Tier 1", subTier: "Sub-Tier 1A", verdictText: "4%: 4–6 words; states clear intent to drop out upon arrival.", status: "Poor (Fail)" };
+          return { score: 5, tier: "Tier 1", subTier: "Sub-Tier 1A", verdictText: "5%: 4–6 words; vague study claim; intent to switch routes.", status: "Poor (Fail)" };
+        }
+        if (wc <= 9) {
+          if (/dependant|family/i.test(cleanText)) return { score: 7, tier: "Tier 1", subTier: "Sub-Tier 1A", verdictText: "7%: 7–9 words; expresses intent to bring unauthorized dependants.", status: "Poor (Fail)" };
+          if (/no money|funds/i.test(cleanText)) return { score: 8, tier: "Tier 1", subTier: "Sub-Tier 1A", verdictText: "8%: 8–10 words; claims interest; zero knowledge of funding.", status: "Poor (Fail)" };
+          return { score: 9, tier: "Tier 1", subTier: "Sub-Tier 1A", verdictText: "9%: 8–10 words; incoherent career plan; mentions immediate settlement.", status: "Poor (Fail)" };
+        }
+        if (wc <= 12) {
+          return { score: 11, tier: "Tier 1", subTier: "Sub-Tier 1B", verdictText: "11%: 10–12 words; names institution only; cannot name program of study.", status: "Poor (Fail)" };
+        }
+        if (wc <= 14) {
+          if (/loan|informal/i.test(cleanText)) return { score: 13, tier: "Tier 1", subTier: "Sub-Tier 1B", verdictText: "13%: 12–14 words; claims funding from unregistered/informal loans.", status: "Poor (Fail)" };
+          return { score: 15, tier: "Tier 1", subTier: "Sub-Tier 1B", verdictText: "15%: 13–15 words; vague career aspirations; unconnected background.", status: "Poor (Fail)" };
+        }
+        return { score: 18, tier: "Tier 1", subTier: "Sub-Tier 1B", verdictText: "18%: 14–16 words; incorrect duration, level, or location details.", status: "Poor (Fail)" };
+      }
+
+      if (passMatches === 0) {
+        if (/good|ranking|nice|developed/i.test(cleanText)) {
+          return { score: 21, tier: "Tier 1", subTier: "Sub-Tier 1C", verdictText: "21%: 15+ words; relies on generic clichés ('good education'); zero program specifics.", status: "Poor (Fail)" };
+        }
+        if (/manager|job/i.test(cleanText)) {
+          return { score: 25, tier: "Tier 1", subTier: "Sub-Tier 1C", verdictText: "25%: 17+ words; states vague career goals without target industry in home country.", status: "Poor (Fail)" };
+        }
+        return { score: 28, tier: "Tier 1", subTier: "Sub-Tier 1C", verdictText: "28%: 18+ words; claims UK education is superior without concrete distinctions.", status: "Poor (Fail)" };
+      }
+
+      if (passMatches === 1 && wc < 25) {
+        if (/fee|money|tuition/i.test(cleanText) && !hasExactGbp) {
+          return { score: 31, tier: "Tier 1", subTier: "Sub-Tier 1D", verdictText: "31%: 20+ words; mentions tuition fees exist; no numerical GBP figure.", status: "Poor (Fail)" };
+        }
+        if (/module/i.test(cleanText)) {
+          return { score: 34, tier: "Tier 1", subTier: "Sub-Tier 1D", verdictText: "34%: 22+ words; lists 1 module name; unable to explain what subject covers.", status: "Poor (Fail)" };
+        }
+        return { score: 38, tier: "Tier 1", subTier: "Sub-Tier 1D", verdictText: "38%: 24+ words; basic job title; zero knowledge of home-country job market.", status: "Poor (Fail)" };
+      }
+
+      if (passMatches <= 2 && wc < 25 && (!hasExactGbp || !hasReturn)) {
+        if (hasExactGbp && !has28Days) {
+          return { score: 44, tier: "Tier 1", subTier: "Sub-Tier 1E", verdictText: "44%: 25+ words; cites tuition fees roughly; unaware of maintenance fund requirements.", status: "Poor (Fail)" };
+        }
+        if (hasModules && !hasExactGbp) {
+          return { score: 46, tier: "Tier 1", subTier: "Sub-Tier 1E", verdictText: "46%: 25+ words; identifies 1–2 modules; weak grasp of financial maintenance.", status: "Poor (Fail)" };
+        }
+        return { score: 48, tier: "Tier 1", subTier: "Sub-Tier 1E", verdictText: "48%: 25+ words; names course and university; misses living cost figures and maintenance rules.", status: "Poor (Fail)" };
+      }
+
+      if (wc >= 15 && wc < 30) {
+        if (passMatches <= 2 && !hasExactGbp) {
+          return { score: 50, tier: "Tier 2", subTier: "Sub-Tier 2A", verdictText: "50%: 15+ words; names course and university correctly; missing module depth and exact fees.", status: "Satisfactory (Borderline)" };
+        }
+        if (hasExactGbp && !hasModules) {
+          return { score: 54, tier: "Tier 2", subTier: "Sub-Tier 2A", verdictText: "54%: 18+ words; cites exact campus location; states fees in GBP but omits breakdown.", status: "Satisfactory (Borderline)" };
+        }
+        if (hasModules && !has20Hours) {
+          return { score: 55, tier: "Tier 2", subTier: "Sub-Tier 2B", verdictText: "55%: 19+ words; names 2 modules accurately; explains connection at a surface level.", status: "Satisfactory (Borderline)" };
+        }
+        if (has20Hours && !hasExactGbp) {
+          return { score: 58, tier: "Tier 2", subTier: "Sub-Tier 2B", verdictText: "58%: 21+ words; names modules; states correct term-time work limits (20 hrs/week).", status: "Satisfactory (Borderline)" };
+        }
+        if (hasExactGbp && hasModules && !has28Days) {
+          return { score: 62, tier: "Tier 2", subTier: "Sub-Tier 2C", verdictText: "62%: 23+ words; knows exact tuition fee and deposit; unaware of 28-day holding rule.", status: "Satisfactory (Borderline)" };
+        }
+        if (hasExactGbp && has20Hours && hasReturn) {
+          return { score: 66, tier: "Tier 2", subTier: "Sub-Tier 2D", verdictText: "66%: 24+ words; names 2–3 modules; mentions realistic post-graduation target role in home country.", status: "Satisfactory (Borderline)" };
+        }
+        return { score: 72, tier: "Tier 2", subTier: "Sub-Tier 2E", verdictText: "72%: 25+ words; details academic syllabus; quotes tuition in GBP; missing target employers.", status: "Satisfactory (Borderline)" };
+      }
+
+      if (wc >= 30) {
+        if (wc < 36 && (!has28Days || !has20Hours)) {
+          return { score: 76, tier: "Tier 3", subTier: "Sub-Tier 3A", verdictText: "76%: 26+ words; hits core modules, exact tuition in GBP, and cites 20 hrs/week work condition.", status: "Excellent (Pass)" };
+        }
+        if (wc >= 36 && wc < 44 && has28Days) {
+          return { score: 82, tier: "Tier 3", subTier: "Sub-Tier 3B", verdictText: "82%: 32+ words; detailed syllabus analysis; fees in GBP, 20 hrs work limit, and target employers in home country.", status: "Excellent (Pass)" };
+        }
+        if (wc >= 44 && wc < 52 && has28Days && hasReturn) {
+          return { score: 88, tier: "Tier 3", subTier: "Sub-Tier 3C", verdictText: "88%: 44+ words; explains career progression, naming target titles, firms in home country, and salary uplift.", status: "Excellent (Pass)" };
+        }
+        if (wc >= 52 && wc < 65 && has28Days && has20Hours && hasModules && hasReturn) {
+          return { score: 92, tier: "Tier 3", subTier: "Sub-Tier 3D", verdictText: "92%: 52+ words; complete breakdown of CAS financial amounts, maintenance rates, term-time work rules, and career roadmap.", status: "Excellent (Pass)" };
+        }
+        if (wc >= 65 && has28Days && has20Hours && hasModules && hasReturn && passMatches >= 3) {
+          if (wc >= 80) {
+            return { score: 100, tier: "Tier 3", subTier: "Sub-Tier 3E", verdictText: "100%: 80+ words; perfect credibility benchmark; flawless 28-day compliance, exact GBP fees, 20 hrs limit, and 5-year career ROI.", status: "Excellent (Pass)" };
+          }
+          if (wc >= 75) {
+            return { score: 98, tier: "Tier 3", subTier: "Sub-Tier 3E", verdictText: "98%: 70+ words; exceptional clarity; covers exact GBP costs, 28-day holding rules, immigration conditions, and realistic ROI.", status: "Excellent (Pass)" };
+          }
+          return { score: 95, tier: "Tier 3", subTier: "Sub-Tier 3E", verdictText: "95%: 58+ words; masterfully balances academic rationale (modules/credits), exact GBP financials, and strict visa compliance.", status: "Excellent (Pass)" };
+        }
+        return { score: 79, tier: "Tier 3", subTier: "Sub-Tier 3A", verdictText: "79%: 29+ words; integrates module details, tuition in GBP, work limitations, and realistic home-country path.", status: "Excellent (Pass)" };
+      }
+
+      return { score: 50, tier: "Tier 2", subTier: "Sub-Tier 2A", verdictText: "50%: Basic response meeting minimum vocabulary threshold.", status: "Satisfactory (Borderline)" };
+    }
+
+    function finishAndShowEvaluation() {
+      document.getElementById('screen-exam').classList.remove('active');
+      document.getElementById('screen-results').classList.add('active');
+      document.getElementById('global-status').textContent = "Assessment Complete";
+
+      const pillars = {
+        1: { name: "1. Genuine Intent to Study", totalScore: 0, count: 0, desc: "Personal motivations for UK, university, and specific program." },
+        2: { name: "2. Course & Institutional Knowledge", totalScore: 0, count: 0, desc: "Knowledge of modules, structure, syllabus, and campus facilities." },
+        3: { name: "3. Financial Awareness & Capacity", totalScore: 0, count: 0, desc: "Clarity on tuition, living expenses, maintenance, and sources of funds." },
+        4: { name: "4. Future Career Progression", totalScore: 0, count: 0, desc: "Defined 5-year post-study roadmap and salary/ROI links in home country." },
+        5: { name: "5. Language & Delivery", totalScore: 0, count: 0, desc: "Fluency, spontaneous delivery, and professional coherence." }
+      };
+
+      const autoFailTriggers = [];
+      let totalAssessedScore = 0;
+      const listContainer = document.getElementById('evaluation-list');
+      listContainer.innerHTML = "";
+
+      let combinedFullTranscript = "";
+
+      userResponses.forEach((res) => {
+        const evalResult = evaluateSingleAnswer(res.userAnswer, res.passKeywords, res.borderlineKeywords, res.failKeywords);
+        const qScore = evalResult.score;
+        totalAssessedScore += qScore;
+
+        const text = (res.userAnswer || "").toLowerCase();
+        combinedFullTranscript += " " + text;
+
+        if (pillars[res.pillarId]) {
+          pillars[res.pillarId].totalScore += qScore;
+          pillars[res.pillarId].count++;
+        }
+
+        const wc = res.userAnswer ? res.userAnswer.split(/\s+/).filter(w => w.length > 0).length : 0;
+        let p5Score = 0;
+        if (wc >= 35) p5Score = 90;
+        else if (wc >= 20) p5Score = 70;
+        else if (wc >= 10) p5Score = 40;
+        else if (wc > 0) p5Score = 15;
+        else p5Score = 0;
+
+        pillars[5].totalScore += p5Score;
+        pillars[5].count++;
+
+        let qPillClass = "pill-fail";
+        if (qScore >= 75) qPillClass = "pill-pass";
+        else if (qScore >= 50) qPillClass = "pill-borderline";
+
+        const card = document.createElement('div');
+        card.className = "eval-card";
+        card.innerHTML = `
+          <div class="eval-card-header">
+            <span><strong>Q${res.num}:</strong> ${res.category} <span class="set-tag">Set ${res.set}</span></span>
+            <span class="${qPillClass}">${evalResult.status} (${qScore}%)</span>
+          </div>
+          <p style="font-weight: 600; color: #1e293b; margin-bottom: 6px;">${res.question}</p>
+          <div style="background: #f8fafc; padding: 10px; border-radius: 6px; font-size: 0.9rem; margin-bottom: 8px;">
+            <strong>Your Spoken Response:</strong> ${res.userAnswer && res.userAnswer.trim() !== "" ? res.userAnswer : '<span style="color:#ef4444; font-weight:600;">[No speech detected / Blank response]</span>'}
+          </div>
+          <div class="subtier-badge">
+            <strong>Evaluation Diagnostic:</strong> ${evalResult.verdictText}
+          </div>
+          ${res.audioUrl ? `<audio controls src="${res.audioUrl}"></audio>` : ''}
+          <div class="benchmark-box">
+            <strong>UKVI Benchmark Response:</strong><br>
+            ${res.modelAnswer}
+          </div>
+        `;
+        listContainer.appendChild(card);
+      });
+
+      if (/work part time to pay|pay my own fees by working|earn in uk to pay tuition/i.test(combinedFullTranscript)) {
+        autoFailTriggers.push("<strong>Financial Mismatch:</strong> Candidate stated intentions to fund mandatory tuition or maintenance through UK part-time employment rather than holding pre-existing verified funds.");
+      }
+      if (/agent wrote|consultant applied for me|agent made my sop|agency did everything/i.test(combinedFullTranscript)) {
+        autoFailTriggers.push("<strong>Third-Party Reliance:</strong> Candidate disclosed that an educational agent or third party wrote the Statement of Purpose (SOP) without independent student authorship.");
+      }
+      if (/never go back|settle permanently in uk|stay in uk forever|get pr in uk/i.test(combinedFullTranscript)) {
+        autoFailTriggers.push("<strong>Immigration Breach Intent:</strong> Candidate stated intent to remain unlawfully or permanently without demonstrating legitimate return ties to their home country.");
+      }
+
+      const pillarsGrid = document.getElementById('rubric-pillars-grid');
+      pillarsGrid.innerHTML = "";
+      let totalPillarsScore = 0;
+
+      for (let pId in pillars) {
+        const p = pillars[pId];
+        const avg = p.count > 0 ? Math.round(p.totalScore / p.count) : 0;
+        totalPillarsScore += avg;
+
+        let statusText = "Poor (Fail)";
+        let pillClass = "pill-fail";
+        if (avg >= 75) {
+          statusText = "Excellent (Pass)";
+          pillClass = "pill-pass";
+        } else if (avg >= 50) {
+          statusText = "Satisfactory (Borderline)";
+          pillClass = "pill-borderline";
+        }
+
+        const pCard = document.createElement('div');
+        pCard.className = "rubric-card";
+        pCard.innerHTML = `
+          <div class="rubric-header">
+            <span style="font-size: 0.95rem; color: var(--primary-dark);">${p.name}</span>
+            <span class="${pillClass}">${statusText}</span>
+          </div>
+          <p style="font-size: 0.8rem; margin: 0; color: var(--text-muted);">${p.desc}</p>
+          <div style="margin-top: 10px; font-weight: 700; font-size: 1.1rem; color: var(--text-main);">${avg}%</div>
+        `;
+        pillarsGrid.appendChild(pCard);
+      }
+
+      const overallFinalScore = Math.round(totalAssessedScore / 10);
+
+      const verdictBanner = document.getElementById('final-verdict-banner');
+      const verdictTitle = document.getElementById('verdict-title');
+      const verdictDesc = document.getElementById('verdict-desc');
+      const verdictScore = document.getElementById('verdict-score');
+      const autoFailBox = document.getElementById('auto-fail-container');
+      const autoFailUl = document.getElementById('auto-fail-reasons');
+
+      verdictScore.textContent = `${overallFinalScore}%`;
+
+      if (autoFailTriggers.length > 0) {
+        verdictBanner.className = "verdict-banner verdict-fail";
+        verdictTitle.textContent = "VERDICT: AUTOMATIC FAIL (COMPLIANCE REFUSAL)";
+        verdictDesc.textContent = "Admissions compliance disqualification triggered due to statutory UKVI policy violations.";
+        autoFailBox.style.display = "block";
+        autoFailUl.innerHTML = autoFailTriggers.map(t => `<li style="margin-bottom: 6px;">${t}</li>`).join('');
+      } else if (overallFinalScore >= 75) {
+        verdictBanner.className = "verdict-banner verdict-pass";
+        verdictTitle.textContent = "VERDICT: EXCELLENT (PASS - CAS RECOMMENDED)";
+        verdictDesc.textContent = "The candidate demonstrated authentic academic intent, precise institutional knowledge, and robust financial credibility.";
+        autoFailBox.style.display = "none";
+      } else if (overallFinalScore >= 50) {
+        verdictBanner.className = "verdict-banner verdict-borderline";
+        verdictTitle.textContent = "VERDICT: SATISFACTORY (BORDERLINE - SECOND INTERVIEW RECOMMENDED)";
+        verdictDesc.textContent = "Answers were generally acceptable but lacked depth in specific module details or salary/ROI justification.";
+        autoFailBox.style.display = "none";
+      } else {
+        verdictBanner.className = "verdict-banner verdict-fail";
+        verdictTitle.textContent = "VERDICT: POOR (FAIL - CAS AT RISK)";
+        verdictDesc.textContent = "Insufficient awareness of course specifics, vague financials, or inadequate delivery.";
+        autoFailBox.style.display = "none";
+      }
+    }
+
+    function restartTest() {
+      document.getElementById('screen-results').classList.remove('active');
+      document.getElementById('screen-setup').classList.add('active');
+      document.getElementById('global-status').textContent = "Equipment Setup";
+    }
+  </script>
+</body>
+</html>
